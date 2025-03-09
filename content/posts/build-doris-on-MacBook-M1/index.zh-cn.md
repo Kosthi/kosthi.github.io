@@ -1,7 +1,7 @@
 +++
 title = 'Build Doris on MacBook M1'
 date = '2025-03-09T20:28:46+08:00'
-draft = true
+draft = false
 tags = ["Doris", "MacBook", "M1"]
 categories = ["Build"]
 author = "Koschei"
