@@ -1,21 +1,21 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>MacBook - 标签 - LoveIt</title><link>https://koschei.top/tags/macbook/</link><description>MacBook - 标签 - LoveIt</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>nitianzero@gmail.com (Koschei)</managingEditor><webMaster>nitianzero@gmail.com (Koschei)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 09 Mar 2025 20:28:46 +0800</lastBuildDate><atom:link href="https://koschei.top/tags/macbook/" rel="self" type="application/rss+xml"/><item><title>Build Doris on MacBook M1</title><link>https://koschei.top/build-doris-on-macbook-m1/</link><pubDate>Sun, 09 Mar 2025 20:28:46 +0800</pubDate><author>Koschei</author><guid>https://koschei.top/build-doris-on-macbook-m1/</guid><description><![CDATA[<h2 id="安装环境依赖">安装环境依赖</h2>
-<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
-    <div class="code-header language-bash">
-        <span class="code-title"><i class="arrow fas fa-chevron-right fa-fw" aria-hidden="true"></i></span>
-        <span class="ellipses"><i class="fas fa-ellipsis-h fa-fw" aria-hidden="true"></i></span>
-        <span class="copy" title="复制到剪贴板"><i class="far fa-copy fa-fw" aria-hidden="true"></i></span>
-    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">brew install automake autoconf libtool pkg-config texinfo coreutils gnu-getopt <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>python@3 cmake ninja ccache bison byacc gettext wget pcre maven llvm@16 openjdk@17 npm</span></span></code></pre></div></div><p><em>Doris master 目前只支持 jdk17 版本</em></p>
-<p>需要设置的环境变量</p>
-<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
-    <div class="code-header language-bash">
-        <span class="code-title"><i class="arrow fas fa-chevron-right fa-fw" aria-hidden="true"></i></span>
-        <span class="ellipses"><i class="fas fa-ellipsis-h fa-fw" aria-hidden="true"></i></span>
-        <span class="copy" title="复制到剪贴板"><i class="far fa-copy fa-fw" aria-hidden="true"></i></span>
-    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">JAVA_HOME</span><span class="o">=</span><span class="s2">&#34;/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="nv">$JAVA_HOME</span>/bin:<span class="nv">$PATH</span>
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="s2">&#34;/opt/homebrew/opt/openjdk@17/bin:</span><span class="nv">$PATH</span><span class="s2">&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="s2">&#34;/opt/homebrew/opt/texinfo/bin:</span><span class="nv">$PATH</span><span class="s2">&#34;</span></span></span></code></pre></div></div><h2 id="拉取自己的代码">拉取自己的代码</h2>
-<ol>
-<li>
-<p>拉取代码</p>]]></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>MacBook on LoveIt</title><link>https://koschei.top/tags/macbook/</link><description>Recent content in MacBook on LoveIt</description><generator>Hugo</generator><language>zh-CN</language><managingEditor>nitianzero@gmail.com (Koschei)</managingEditor><webMaster>nitianzero@gmail.com (Koschei)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 09 Mar 2025 21:00:52 +0800</lastBuildDate><atom:link href="https://koschei.top/tags/macbook/index.xml" rel="self" type="application/rss+xml"/><item><title>Build Doris on MacBook M1</title><link>https://koschei.top/build-doris-on-macbook-m1/</link><pubDate>Sun, 09 Mar 2025 20:28:46 +0800</pubDate><author>nitianzero@gmail.com (Koschei)</author><guid>https://koschei.top/build-doris-on-macbook-m1/</guid><description>&lt;h2 id="安装环境依赖">安装环境依赖&lt;/h2>
+&lt;div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+ &lt;div class="code-header language-bash">
+ &lt;span class="code-title">&lt;i class="arrow fas fa-chevron-right fa-fw" aria-hidden="true">&lt;/i>&lt;/span>
+ &lt;span class="ellipses">&lt;i class="fas fa-ellipsis-h fa-fw" aria-hidden="true">&lt;/i>&lt;/span>
+ &lt;span class="copy" title="复制到剪贴板">&lt;i class="far fa-copy fa-fw" aria-hidden="true">&lt;/i>&lt;/span>
+ &lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">brew install automake autoconf libtool pkg-config texinfo coreutils gnu-getopt &lt;span class="se">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span>python@3 cmake ninja ccache bison byacc gettext wget pcre maven llvm@16 openjdk@17 npm&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;p>&lt;em>Doris master 目前只支持 jdk17 版本&lt;/em>&lt;/p>
+&lt;p>需要设置的环境变量&lt;/p>
+&lt;div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+ &lt;div class="code-header language-bash">
+ &lt;span class="code-title">&lt;i class="arrow fas fa-chevron-right fa-fw" aria-hidden="true">&lt;/i>&lt;/span>
+ &lt;span class="ellipses">&lt;i class="fas fa-ellipsis-h fa-fw" aria-hidden="true">&lt;/i>&lt;/span>
+ &lt;span class="copy" title="复制到剪贴板">&lt;i class="far fa-copy fa-fw" aria-hidden="true">&lt;/i>&lt;/span>
+ &lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">export&lt;/span> &lt;span class="nv">JAVA_HOME&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s2">&amp;#34;/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">export&lt;/span> &lt;span class="nv">PATH&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="nv">$JAVA_HOME&lt;/span>/bin:&lt;span class="nv">$PATH&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">export&lt;/span> &lt;span class="nv">PATH&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s2">&amp;#34;/opt/homebrew/opt/openjdk@17/bin:&lt;/span>&lt;span class="nv">$PATH&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">export&lt;/span> &lt;span class="nv">PATH&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s2">&amp;#34;/opt/homebrew/opt/texinfo/bin:&lt;/span>&lt;span class="nv">$PATH&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;h2 id="拉取自己的代码">拉取自己的代码&lt;/h2>
+&lt;ol>
+&lt;li>
+&lt;p>拉取代码&lt;/p></description></item></channel></rss>
