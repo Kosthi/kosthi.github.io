@@ -61,4 +61,4 @@ Disallow: /
 User-agent: ZoominfoBot
 Disallow: /
 
-Sitemap: https://koschei.top/sitemap.xml
+Sitemap: https://koschei.top/en/sitemap.xml
