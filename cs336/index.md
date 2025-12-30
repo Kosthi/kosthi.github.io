@@ -340,3 +340,83 @@ int_map.find({101, 115});  // O(1)，一次哈希计算+整数比较
 string_map.find("es");     // O(1)，一次哈希计算+可能的多字节比较
 ```
 
+**BPE实现性能对比**
+
+测试机器：autodl Xeon(R) Platinum 8352V 32核心CPU 60GB内存，预分词使用24个核心并行工作。
+
+|           数据           | 版本            | 预分词  | BPE归并训练 | 总时间   |
+| :----------------------: | --------------- | ------- | ----------- | -------- |
+| TinyStoriesV2-GPT4-train | Python          | 29.65s  | 10min++     | 不可接受 |
+| TinyStoriesV2-GPT4-train | Cpp 未优化归并  | 27.337s | 366.644s    | 394.16s  |
+| TinyStoriesV2-GPT4-train | Cpp 优化归并    | 26.767s | 1.081s      | 28.03s   |
+| TinyStoriesV2-GPT4-train | Rust 优化预分词 | 67.261s | -           | -        |
+
+Python 的regex库底层c语言优化太神了，CPP的regex库对unicode支持不完善，Rust性能比Python慢一倍，正如文档所说，Python的regex库更胜一筹`...but the regex package in Python is, if anything, even faster.`。
+
+##### **问题**（train_bpe_tinystories）：在 TinyStories 上训练 BPE（2 分）
+
+(a) 训练耗时多久、占用多少内存？词汇表中最长的令牌是什么？是否合理？
+
+28.03s
+
+10GB
+
+最长的 token 是 token：" accomplishment"，对应的 id： 7159，长度： 15 个字符（包括前面的空格）
+
+合理。
+
+(b) 分析代码性能。分词器训练过程中哪个部分耗时最长？
+
+- **N**：去重后的单词总数（distinct words）
+- **L**：平均单词长度（字符数/初始token数）
+- **V**：目标词汇表大小
+- **M**：合并次数 = V - 256 - |special_tokens|（从256个字节token开始）
+- **K**：特定pair的出现次数
+- **P**：临时Pair频率统计表
+
+未优化前耗时最大是BPE归并过程，需要6分钟，时间复杂度为O(M × N × L)，空间复杂度O(N × L + P)。
+
+优化后只要1s左右，时间复杂度为O(N × L + M)，
+
+位置索引: O(N × L)，存储每个相邻对的位置，优先级队列：O(P)，总计空间复杂度为O(N × L + P)。优化算法需要额外的位置索引存储，但避免了每轮重新统计的开销。
+
+优化后耗时最大为预分词过程，16进程并行30s，24进程并行25s，时间复杂度O(N*L/D)，D为进程个数。
+
+##### **问题**（train_bpe_expts_owt）：在 OpenWebText 上训练 BPE（2 分）
+
+(a) 在 OpenWebText 数据集上训练字节级 BPE 分词器，词汇表最大大小设为 32,000。将生成的词汇表和合并序列序列化到磁盘以便后续查看。词汇表中最长的令牌是什么？是否合理？
+
+最长的令牌列表
+  ID:  25835 | 字节长度:  64 | 内容: '----------------------------------------------------------------'
+  ID:  25821 | 字节长度:  64 | 内容: 'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ'
+
+(b) 对比在 TinyStories 和 OpenWebText 上训练的分词器。
+
+有一些 token 本身里面包含换行符 \n ，写文件的时候没有做转义 ，所以「一条合并规则」在文件里被拆成了多行。
+
+```
+\n The\n           ← 中间这个 \n 是 token 本身，最后那个 \n 是行结束
+        （这一行是空的，因为前面那个 \n 把光标移到下一行）
+The
+```
+
+##### 2.7 实验
+
+##### **问题**（tokenizer_experiments）：分词器实验（4 分）
+
+(a) 从 TinyStories 和 OpenWebText 中各采样 10 个文档。使用之前训练的 TinyStories 分词器（词汇表大小 10K）和 OpenWebText 分词器（词汇表大小 32K），将这些采样文档编码为整数 ID。每个分词器的压缩比（字节数 / 令牌数）是多少？
+
+TinyStories-10K 分词器在 TinyStories 上的压缩比为 **4.14 字节/令牌**，OpenWebText-32K 分词器在 OpenWebText 上的压缩比为 **4.70 字节/令牌**。
+
+(b) 用 TinyStories 分词器编码 OpenWebText 采样文档会发生什么？对比压缩比，或定性描述结果。
+
+使用 TinyStories-10K 分词器编码 OpenWebText 文档时，压缩比降至 **3.26 字节/令牌**，表明更小的词汇表（10K）在面对复杂文本时会产生更多令牌，导致压缩效率降低。
+
+(c) 估算分词器的吞吐量（如字节 / 秒）。编码 Pile 数据集（825GB 文本）需要多长时间？
+
+TinyStories-10K 分词器吞吐量约 **626,519.6 字节/秒**，编码 825GB Pile 数据集约需 **16.4 天**；OpenWebText-32K 约 **763,734.4 字节/秒**，约需 **13.4天**。
+
+(d) 使用 TinyStories 和 OpenWebText 分词器，分别将对应的训练集和开发集编码为整数令牌 ID（后续用于训练语言模型）。建议将令牌 ID 序列化为`uint16`类型的 NumPy 数组。为什么`uint16`是合适的选择？
+
+两个分词器的词汇表大小（10K 和 32K）均小于 65,536（2¹⁶），因此 uint16 足以表示所有令牌 ID，且比 uint32 节省 50% 存储空间。
+
