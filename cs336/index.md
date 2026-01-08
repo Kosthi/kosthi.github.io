@@ -576,3 +576,312 @@ FLOPs分布:
   - 前馈网络（FFN）的占比从约 71.83% 下降到约 68.68%
   - 语言模型头的占比从约 3.92% 下降到约 3.75%
 
+#### 4. 训练 Transformer 语言模型
+##### 4.1 交叉熵损失
+Transformer 语言模型会为长度为 \(m+1\) 的序列 x 和每个位置 \(i=1,…,m\) 定义分布 \(p_{\theta}(x_{i+1} | x_{1: i})\)。
+
+给定由长度为m的序列组成的训练集D，我们定义标准的交叉熵（负对数似然）损失函数：
+
+\(\ell(\theta ; D)=\frac{1}{|D|} \sum_{x \in D} \sum_{i=1}^{m}-\log p_{\theta}\left(x_{i+1} | x_{1: i}\right)\)
+
+Transformer 的单次前向传播会同时输出所有\(i=1,…,m\)对应的\(p_{\theta}(x_{i+1} | x_{1: i})\)，其中|D|为训练集大小(batch_size)。
+
+具体来说，Transformer 会为每个位置 i 计算对数几率（logits）\(o_{i} \in \mathbb{R}^{vocab\_size}\)，由此可得：
+
+\(p\left(x_{i+1} | x_{1: i}\right)=\text{softmax}\left(o_{i}\right)\left[x_{i+1}\right]=\frac{\exp \left(o_{i}\left[x_{i+1}\right]\right)}{\sum_{a=1}^{vocab\_size} \exp \left(o_{i}[a]\right)}\)
+
+交叉熵损失通常基于对数几率向量\(o_{i} \in \mathbb{R}^{vocab\_size}\)和目标值\(x_{i+1}\)定义。与 softmax 类似，实现交叉熵损失时需要注意数值稳定性问题。
+
+我们已经实现了 softmax 的稳定版本，对其取自然对数得 log_softmax：
+\[
+\log\left(\frac{e^{x_i}}{\sum_j e^{x_j}}\right) = \log\left(\frac{e^{x_i-m}}{\sum_j e^{x_j-m}}\right) = (x_i - m) - \log\sum_j e^{x_j-m}
+\]
+
+**Problem（cross_entropy）：实现交叉熵**
+
+```python
+import torch
+from .softmax import log_softmax
+
+
+def cross_entropy(inputs: torch.Tensor, targets: torch.Tensor):
+    # inputs: (batch_size, vocab_size)
+    # targets: (batch_size, )
+    # (batch_size, vocab_size)
+    D = inputs.shape[0]
+
+    # 1. 计算softmax概率
+    probs = log_softmax(inputs, dim=-1)
+
+    # 2. 提取目标位置的概率
+    p = probs[torch.arange(D), targets]
+
+    # 3. 计算平均损失（除以batch_size）
+    return -torch.mean(p)
+```
+
+###### **Problem**（learning_rate_tuning）：调整学习率
+
+如前所述，学习率是影响训练效果最重要的超参数之一。在我们的简单示例中实际验证这一点：使用上述 SGD 示例，分别尝试另外三个学习率值（1e1、1e2、1e3），仅训练 10 次迭代。观察每个学习率对应的损失变化：是衰减更快、更慢，还是发散（即训练过程中损失增加）？
+
+```bash
+(cs336-basics) (base) koschei@192 assignment1-basics % uv run ./cs336_basics/sgd.py
+learing rate: 10.0
+step1 , loss: 20.765413284301758
+step2 , loss: 13.289864540100098
+step3 , loss: 9.796720504760742
+step4 , loss: 7.66488790512085
+step5 , loss: 6.208559036254883
+step6 , loss: 5.14760684967041
+step7 , loss: 4.341323375701904
+step8 , loss: 3.709784507751465
+step9 , loss: 3.203690767288208
+step10, loss: 2.7907707691192627
+(cs336-basics) (base) koschei@192 assignment1-basics % uv run ./cs336_basics/sgd.py
+learing rate: 100.0
+step1 , loss: 29.470537185668945
+step2 , loss: 29.470535278320312
+step3 , loss: 5.0563435554504395
+step4 , loss: 0.12100967764854431
+step5 , loss: 1.2657409207190063e-16
+step6 , loss: 1.4107469187345678e-18
+step7 , loss: 4.750480809550992e-20
+step8 , loss: 2.8298939276754454e-21
+step9 , loss: 2.427666298147088e-22
+step10, loss: 2.697406997941209e-23
+(cs336-basics) (base) koschei@192 assignment1-basics % uv run ./cs336_basics/sgd.py
+learing rate: 1000.0
+step1 , loss: 23.761384963989258
+step2 , loss: 8577.859375
+step3 , loss: 1481531.25
+step4 , loss: 164804544.0
+step5 , loss: 13349167104.0
+step6 , loss: 842485268480.0
+step7 , loss: 43250442305536.0
+step8 , loss: 1860819142836224.0
+step9 , loss: 6.858582164871578e+16
+step10, loss: 2.2023668704120668e+18
+```
+
+**ANSWER: ** 学习率 10 时损失缓慢衰减；学习率 100 时损失迅速衰减，极速收敛至接近零；学习率 1000 时损失爆炸式增长，明显发散。
+
+**Problem (adamw): 实现 AdamW**
+
+```python
+import torch
+import math
+
+
+class AdamW(torch.optim.Optimizer):
+    def __init__(self, params, lr=1e-3, betas=(0.9, 0.999), eps=1e-8, weight_decay=1e-2):
+        if lr < 0:
+            raise ValueError(f"无效的学习率：{lr}")
+        defaults = dict(lr=lr, betas=betas, eps=eps, weight_decay=weight_decay)
+        super().__init__(params, defaults)
+
+    def step(self, closure=None):
+        loss = None
+        if closure is not None:
+            loss = closure()
+
+        for group in self.param_groups:
+            # 获取学习率等参数
+            alpha = group["lr"]
+            beta1, beat2 = group["betas"]
+            eps = group["eps"]
+            weight_decay = group["weight_decay"]
+
+            for p in group["params"]:
+                if p.grad is None:
+                    continue
+                # 获取与参数 p 相关的状态
+                state = self.state[p]
+
+                # 从状态中获取迭代次数，若无则初始化为 1
+                t = state.get("t", 1)
+                # 一阶矩估计
+                m = state.get("m", torch.zeros_like(p))
+                # 二阶矩估计
+                v = state.get("v", torch.zeros_like(p))
+
+                # 获取损失相对于p的梯度
+                g = p.grad.data
+
+                # 更新一、二阶矩估计
+                m = beta1 * m + (1 - beta1) * g
+                v = beat2 * v + (1 - beat2) * g * g
+
+                # 计算当前迭代的调整后学习率 αt
+                alpha_t = alpha * math.sqrt(1 - beat2**t) / (1 - beta1**t)
+                # 更新参数
+                p.data -= alpha_t * m / (torch.sqrt(v) + eps)
+                # 应用权重衰减
+                p.data -= alpha * weight_decay * p.data
+
+                # 递增迭代次数
+                state["t"] = t + 1
+                state["m"] = m
+                state["v"] = v
+
+        return loss
+```
+
+**Problem（AdamW Accounting）：AdamW 训练的资源核算**
+
+计算运行 AdamW 所需的内存和计算资源。假设所有张量都使用 float32 精度。
+
+**(a) 运行 AdamW 需要多少峰值内存？**
+
+根据参数、激活值、梯度和优化器状态的内存使用情况分解答案。用批量大小（batch_size）和模型超参数（vocab_size、context_length、num_layers、d_model、num_heads）表示。假设\(d_{ff}=4 \times d_{model}\)。
+
+为简化计算，激活值的内存使用仅考虑以下组件：
+
+- Transformer 块
+  - RMSNorm 层
+  - 多头自注意力子层：QKV 投影、\(Q^{\top} K\)矩阵乘法、softmax、值的加权和、输出投影
+  - 位置 - wise 前馈网络：\(W_{1}\)矩阵乘法、SiLU 激活、\(W_{2}\)矩阵乘法
+- 最终的 RMSNorm
+- 输出嵌入
+- 对数几率的交叉熵计算
+
+分别给出参数、激活值、梯度和优化器状态的代数表达式，以及总内存的代数表达式。
+
+- **参数内存**：  
+	$$
+  M_{\text{params}} = 4 \left( 2Vd + L(16d^2 + 2d) + d \right)
+  $$
+  其中 \(V\) 为词表大小，\(d\) 为模型维度，\(L\) 为层数。
+
+- **梯度内存**：  
+  \[
+  M_{\text{params}} = 4 \left( 2Vd + L(16d^2 + 2d) + d \right)
+  \]
+
+- **优化器状态内存**（AdamW 存储一阶矩和二阶矩）：  
+  \[
+  M_{\text{opt}} = 8 \left( 2Vd + L(16d^2 + 2d) + d \right)
+  \]
+
+- **激活内存**（基于中间张量的保守估计）：  
+  \[
+  M_{\text{act}} = 4 \times \left[ L \times (16 B T d + 2 B h T^2) + B T d + 2 B T V \right]
+  \]
+  其中 \(B\) 为批次大小，\(T\) 为上下文长度，\(h\) 为注意力头数。
+
+- **总峰值内存**：
+  \[
+  M_{\text{total}} = 16 \left( 2Vd + L(16d^2 + 2d) + d \right) + 4 \times \left[ L \times (16 B T d + 2B h T^2) + B T d + 2 B T V \right]
+  \]
+
+参考 DeepSeek 给的思路，给出激活内存的计算过程。
+
+**激活内存计算过程**
+
+激活内存指前向传播中需要存储的中间变量，用于反向传播计算梯度。根据给定的组件，我们逐项计算每个组件的激活内存（以元素数量计）：
+
+**1. Transformer 块（共 L 层）**
+
+每个 Transformer 层包含以下部分，其激活内存计算如下：
+
+- **RMSNorm(s)**:  
+  输入和输出形状均为 `[B, T, d]`，需要存储输出（输入通常来自上一层已存储）。按存储输出计算：`B × T × d`。  
+  每层有两个 RMSNorm，共 `2 × B × T × d`。
+- **多头自注意力子层**:
+  - **QKV 投影**：通过线性层将输入 `[B, T, d]` 投影为 Q、K、V。通常合并为一个输出张量，形状 `[B, T, 3d]`，然后拆分为三个独立的 `[B, T, d]` 张量。需存储这三个张量，共 `3 × B × T × d`。
+  - **Q⊤K 矩阵乘法**：计算注意力分数，输出形状 `[B, h, T, T]`，需存储。元素数量为 `B × h × T × T`。
+  - **softmax**：对注意力分数进行归一化，输出形状与输入相同，需存储。元素数量为 `B × h × T × T`。
+  - **加权和**：将注意力权重与 V 相乘，得到每个头的输出，然后合并多头，输出形状 `[B, T, d]`，需存储。元素数量为 `B × T × d`。
+  - **输出投影**：线性层，输入 `[B, T, d]`，输出 `[B, T, d]`，需存储。元素数量为 `B × T × d`。
+- **位置前馈网络**:
+  - **W1 矩阵乘法**：将输入 `[B, T, d]` 投影到 `[B, T, 4d]`（因 `d_ff = 4 × d`），需存储。元素数量为 `4 × B × T × d`。
+  - **SiLU 激活**：输入和输出均为 `[B, T, 4d]`，需存储输出。元素数量为 `4 × B × T × d`。
+  - ~~**W3 矩阵乘法**：将输入 `[B, T, d]` 投影到 `[B, T, 4d]`（因 `d_ff = 4 × d`），需存储。元素数量为 `4 × B × T × d`。~~
+  - ~~**GLU门控**：输入和输出`[B, T, 4d]`，需存储输出。元素数量为 `4 × B × T × d`。~~
+  - **W2 矩阵乘法**：将 `[B, T, 4d]` 投影回 `[B, T, d]`，需存储。元素数量为 `B × T × d`。
+
+此外，每个 Transformer 层还有残差连接，需要存储层的输入（来自上一层输出）和最终输出。但这些通常已在其他组件中考虑或可重用，不单独计算。
+
+汇总一个 Transformer 层的激活内存元素数量：
+\[
+(2 + 3 + 1 + 1 + 4 + 4 + 1) \times B \times T \times d + 2 \times B \times h \times T^2 = 16 \times B \times T \times d + 2 \times B \times h \times T^2
+\]
+故根据题目要求，我们采用给定表达式：
+\[
+\text{每层激活内存（元素）} = 16 \times B \times T \times d + 2 \times B \times h \times T^2
+\]
+**2. 其他组件**
+
+- **最终 RMSNorm**：输入和输出形状 `[B, T, d]`，需存储输出。元素数量为 `B × T × d`。
+- **输出嵌入**：将隐藏状态投影到词表，输出 logits 形状 `[B, T, V]`，需存储。元素数量为 `B × T × V`。
+- **交叉熵损失**：需要 logits 计算损失，logits 已存储；需要计算 log_softmax，临时存储probs`B × T × V`；标签通常为整数，不占显著激活内存。
+
+**3. 总激活内存**
+
+综合以上，总激活内存元素数量为：
+\[
+L \times (16 \times B \times T \times d + 2 \times B \times h \times T^2) + B \times T \times d + 2 \times B \times T \times V
+\]
+转换为字节（乘以 4，因 float32 占 4 字节）：
+\[
+M_{\text{act}} = 4 \times \left[ L \times (16 B T d + 2 B h T^2) + B T d + 2 B T V \right]
+\]
+**(b) 针对 GPT-2 XL 规模的模型实例化答案，得到仅依赖于批量大小（batch_size）的表达式。在 80GB 内存中，最多可使用多大的批量大小？**
+
+给出形如a×batch_size+b的表达式（其中a、b为数值），以及最大批量大小的数值。
+
+总内存：
+\[
+M_{\text{total}} \approx 14.45 \times B + 31.70\ \text{GB}
+\]
+设内存上限为 80 GB：
+\[
+14.45B + 31.70 \leq 80 \implies B \leq \frac{80 - 31.70}{14.45} \approx 3.34
+\]
+最大批次大小为 **3**。
+
+**(c) 执行一次 AdamW 步骤需要多少 FLOPs？**
+
+给出代数表达式，并简要说明理由。
+
+GPT-2 XL 参数总数 P = 2,127,057,600
+
+AdamW 更新每个参数约需 10 次浮点操作：
+
+  1. 计算一阶矩估计: 2 FLOPs (乘法和加法)
+  2. 计算二阶矩估计: 2 FLOPs (乘法和加法)
+  3. 偏差修正: 2 FLOPs (幂运算和除法)
+  4. 参数更新: 4 FLOPs (除法、平方根、乘法、减法)
+    总计: ~10 FLOPs/参数
+
+一步 AdamW 的总 FLOPs = 10 × P = 2.13e+10 次
+
+**(d) 模型 FLOPs 利用率（MFU）定义为观测吞吐量（每秒处理的 token 数）与硬件理论峰值 FLOP 吞吐量的比值。NVIDIA A100 GPU 的 float32 运算理论峰值为 19.5 太拉 FLOP/s。假设 MFU 为 50%，在单个 A100 上，使用批量大小 1024 训练 GPT-2 XL 400K 步骤需要多长时间？按照 Kaplan 等人和 Hoffmann 等人的假设，反向传播的 FLOPs 是前向传播的两倍。**
+
+给出训练所需的天数，并简要说明理由。
+
+每训练步的 FLOPs 主要来自前向与后向传播。假设：
+- 前向传播 FLOPs 约为 `2 × B × T × P`（每个参数一次乘加，即 2 FLOPs）。
+- 后向传播 FLOPs 约为前向的 2 倍。
+
+每步总 FLOPs：
+\[
+\text{FLOPs}_{\text{step}} \approx 6 \times B \times T \times P
+\]
+代入 `B = 1024`，`T = 1024`，`P = 2,127,057,600`：
+\[
+\text{FLOPs}_{\text{step}} \approx 6 \times 1024 \times 1024 \times 2,127,057,600 \approx 1.34 \times 10^{16} \ \text{FLOPs}
+\]
+总步数 400k，总 FLOPs：
+\[
+\text{FLOPs}_{\text{total}} \approx 400,\!000 \times 13,382,289,299,865,600 = 5.35 \times 10^{21} \ \text{FLOPs}
+\]
+NVIDIA A100 峰值吞吐为 `19.5 TFLOPS = 1.95 × 10^13 FLOP/s`，50% MFU 下实际吞吐：
+\[
+\text{Throughput} = 0.5 \times 1.95 \times 10^{13} = 9.75 \times 10^{12} \ \text{FLOP/s}
+\]
+训练时间：
+\[
+t = \frac{5.35 \times 10^{21}}{9.75 \times 10^{12}} \approx 5.5 \times 10^8 \ \text{秒} \approx 6354.4 \ \text{天} \approx 17.4 \ \text{年}
+\]
+因此，在单 A100 上以 50% MFU 训练需约 **17.4 年**。
+
