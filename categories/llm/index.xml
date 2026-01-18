@@ -1,2 +1,22 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>LLM on LoveIt</title><link>https://koschei.top/categories/llm/</link><description>Recent content in LLM on LoveIt</description><generator>Hugo</generator><language>zh-CN</language><managingEditor>nitianzero@gmail.com (Koschei)</managingEditor><webMaster>nitianzero@gmail.com (Koschei)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Thu, 08 Jan 2026 13:02:11 +0800</lastBuildDate><atom:link href="https://koschei.top/categories/llm/index.xml" rel="self" type="application/rss+xml"/><item><title>斯坦福CS336：从零开始的语言模型</title><link>https://koschei.top/cs336/</link><pubDate>Sat, 14 Jun 2025 17:43:58 +0800</pubDate><author>nitianzero@gmail.com (Koschei)</author><guid>https://koschei.top/cs336/</guid><description>&lt;h2 id="为什么系统爱好者都应该学习大模型"&gt;为什么系统爱好者都应该学习大模型？&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>LLM on LoveIt</title><link>https://koschei.top/categories/llm/</link><description>Recent content in LLM on LoveIt</description><generator>Hugo</generator><language>zh-CN</language><managingEditor>nitianzero@gmail.com (Koschei)</managingEditor><webMaster>nitianzero@gmail.com (Koschei)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 18 Jan 2026 21:15:57 +0800</lastBuildDate><atom:link href="https://koschei.top/categories/llm/index.xml" rel="self" type="application/rss+xml"/><item><title>[斯坦福CS336]作业五：对齐与推理强化学习</title><link>https://koschei.top/cs336-assign2/</link><pubDate>Tue, 13 Jan 2026 18:12:00 +0800</pubDate><author>nitianzero@gmail.com (Koschei)</author><guid>https://koschei.top/cs336-assign2/</guid><description>&lt;hr&gt;
+&lt;p&gt;title: &amp;ldquo;[斯坦福CS336]作业五：对齐与推理强化学习&amp;rdquo;
+subtitle: &amp;quot;&amp;quot;
+date: 2026-01-13T18:12:00+08:00
+lastmod: 2026-01-13T18:13:00+08:00
+draft: false
+author: &amp;ldquo;Koschei&amp;rdquo;
+authorLink: &amp;quot;&amp;quot;
+description: &amp;quot;&amp;quot;
+images: []
+resources:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;name: &amp;quot;&amp;quot;
+src: &amp;quot;&amp;quot;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;tags: [&amp;ldquo;CS336&amp;rdquo;, &amp;ldquo;LLM&amp;rdquo;]
+categories: [&amp;ldquo;LLM&amp;rdquo;]&lt;/p&gt;
+&lt;h2 id="lightgallery-true"&gt;lightgallery: true&lt;/h2&gt;
+&lt;h1 id="作业5对齐与推理强化学习"&gt;作业5：对齐与推理强化学习&lt;/h1&gt;
+&lt;h2 id="1-作业概述"&gt;1 作业概述&lt;/h2&gt;
+&lt;p&gt;本次作业中，你将获得训练语言模型解决数学问题时进行推理的实践经验。&lt;/p&gt;</description></item><item><title>[斯坦福CS336]作业1：构建 Transformer 语言模型</title><link>https://koschei.top/cs336-assign1/</link><pubDate>Sat, 14 Jun 2025 17:43:58 +0800</pubDate><author>nitianzero@gmail.com (Koschei)</author><guid>https://koschei.top/cs336-assign1/</guid><description>&lt;h2 id="为什么系统爱好者都应该学习大模型"&gt;为什么系统爱好者都应该学习大模型？&lt;/h2&gt;
 &lt;p&gt;在当今AI技术浪潮中，掌握大模型知识已成为系统开发者的必备技能。通过参与&lt;strong&gt;斯坦福CS336大模型系统课程&lt;/strong&gt;，开始从零构建大模型的实践之旅。这门课程很可能在未来3年内成为系统领域的标杆课程（正如CMU 15-445数据库课程近年来的地位）。&lt;/p&gt;</description></item></channel></rss>
