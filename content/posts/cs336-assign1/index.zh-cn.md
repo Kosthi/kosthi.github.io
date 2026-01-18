@@ -1,5 +1,5 @@
 ---
-title: "[斯坦福CS336]作业1：构建 Transformer 语言模型"
+title: "[斯坦福CS336]作业一：构建 Transformer 语言模型"
 subtitle: ""
 date: 2025-06-14T17:43:58+08:00
 lastmod: 2025-06-14T17:43:58+08:00
