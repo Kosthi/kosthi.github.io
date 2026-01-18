@@ -1,26 +1,6 @@
 # [斯坦福CS336]作业五：对齐与推理强化学习
 
 
----
-title: "[斯坦福CS336]作业五：对齐与推理强化学习"
-subtitle: ""
-date: 2026-01-13T18:12:00+08:00
-lastmod: 2026-01-13T18:13:00+08:00
-draft: false
-author: "Koschei"
-authorLink: ""
-description: ""
-images: []
-resources:
-- name: ""
-  src: ""
-
-tags: ["CS336", "LLM"]
-categories: ["LLM"]
-
-lightgallery: true
----
-
 # 作业5：对齐与推理强化学习
 
 ## 1 作业概述
