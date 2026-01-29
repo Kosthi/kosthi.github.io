@@ -21,8 +21,11 @@ jobs:
           hugo-version: 'latest'
           extended: true
 
+      - name: Clean cache
+        run: rm -rf resources/_gen
+
       - name: Build
-        run: hugo --minify
+        run: hugo --minify --gc
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
