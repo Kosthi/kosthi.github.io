@@ -166,7 +166,7 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
     since = 2025
     # PSB info only in China (HTML format is supported)
     # PSB 公安备案信息，仅在中国使用 (支持 HTML 格式)
-    psb = '<a href="https://beian.mps.gov.cn/#/query/webSearch?code=33032602100584" rel="noreferrer" target="_blank"><img src="备案图标.png" alt="备案图标" style="vertical-align: middle; width: 16px;"/>浙公网安备33032602100584号</a>'
+    psb = '<a href="https://beian.mps.gov.cn/#/query/webSearch?code=33032602100584" rel="noreferrer" target="_blank"><img src="/备案图标.png" alt="备案图标" style="vertical-align: middle; width: 16px;"/>浙公网安备33032602100584号</a>'
     # ICP info only in China (HTML format is supported)
     # ICP 备案信息，仅在中国使用 (支持 HTML 格式)
     icp = '<a href="https://beian.miit.gov.cn/" rel="noreferrer" target="_blank">浙ICP备2024075396号-2</a>'

@@ -1,0 +1,200 @@
+{{- /* Particle Animation Canvas */ -}}
+<canvas id="particles-canvas"></canvas>
+
+{{- /* Reading Progress Bar */ -}}
+<div id="reading-progress-bar"></div>
+
+<style>
+/* Particle Canvas Styles */
+#particles-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.6;
+}
+
+[theme="dark"] #particles-canvas {
+  opacity: 0.4;
+}
+
+/* Reading Progress Bar Styles */
+#reading-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 3px;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6, #a855f7, #ec4899);
+  z-index: 9999;
+  transition: width 50ms ease-out;
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+}
+</style>
+
+<script>
+(function() {
+  // ========== Particle Animation ========== //
+  const canvas = document.getElementById('particles-canvas');
+  const ctx = canvas.getContext('2d');
+  
+  let particles = [];
+  let animationId;
+  const particleCount = 80;
+  
+  // Color palette - Google-inspired gradient colors
+  const colors = [
+    '#6366f1', // Indigo
+    '#8b5cf6', // Violet
+    '#a855f7', // Purple
+    '#ec4899', // Pink
+    '#3b82f6', // Blue
+    '#14b8a6', // Teal
+  ];
+  
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  
+  class Particle {
+    constructor() {
+      this.reset();
+    }
+    
+    reset() {
+      // Start from center
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      
+      // Random angle for radial movement
+      this.angle = Math.random() * Math.PI * 2;
+      
+      // Start near center with some randomness
+      const startRadius = Math.random() * 100;
+      this.x = centerX + Math.cos(this.angle) * startRadius;
+      this.y = centerY + Math.sin(this.angle) * startRadius;
+      
+      // Radial velocity (outward movement)
+      this.speed = 0.2 + Math.random() * 0.5;
+      this.vx = Math.cos(this.angle) * this.speed;
+      this.vy = Math.sin(this.angle) * this.speed;
+      
+      // Particle properties
+      this.length = 8 + Math.random() * 15; // Elongated shard
+      this.width = 2 + Math.random() * 2;
+      this.color = colors[Math.floor(Math.random() * colors.length)];
+      this.opacity = 0.3 + Math.random() * 0.5;
+      this.rotation = this.angle; // Align with movement direction
+      
+      // Pulse animation
+      this.pulseSpeed = 0.01 + Math.random() * 0.02;
+      this.pulseOffset = Math.random() * Math.PI * 2;
+    }
+    
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      
+      // Subtle pulse effect
+      this.opacity = 0.3 + Math.sin(Date.now() * this.pulseSpeed + this.pulseOffset) * 0.2;
+      
+      // Reset when particle goes off screen
+      const margin = 100;
+      if (this.x < -margin || this.x > canvas.width + margin ||
+          this.y < -margin || this.y > canvas.height + margin) {
+        this.reset();
+      }
+    }
+    
+    draw() {
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.rotation);
+      ctx.globalAlpha = this.opacity;
+      
+      // Draw elongated shard/pill shape
+      ctx.beginPath();
+      ctx.roundRect(-this.length / 2, -this.width / 2, this.length, this.width, this.width / 2);
+      ctx.fillStyle = this.color;
+      ctx.fill();
+      
+      ctx.restore();
+    }
+  }
+  
+  function initParticles() {
+    particles = [];
+    for (let i = 0; i < particleCount; i++) {
+      const particle = new Particle();
+      // Stagger initial positions
+      const staggerRadius = Math.random() * Math.max(canvas.width, canvas.height) / 2;
+      particle.x = canvas.width / 2 + Math.cos(particle.angle) * staggerRadius;
+      particle.y = canvas.height / 2 + Math.sin(particle.angle) * staggerRadius;
+      particles.push(particle);
+    }
+  }
+  
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw subtle center glow
+    const gradient = ctx.createRadialGradient(
+      canvas.width / 2, canvas.height / 2, 0,
+      canvas.width / 2, canvas.height / 2, Math.max(canvas.width, canvas.height) / 2
+    );
+    gradient.addColorStop(0, 'rgba(139, 92, 246, 0.03)');
+    gradient.addColorStop(0.5, 'rgba(99, 102, 241, 0.01)');
+    gradient.addColorStop(1, 'transparent');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Update and draw particles
+    particles.forEach(particle => {
+      particle.update();
+      particle.draw();
+    });
+    
+    animationId = requestAnimationFrame(animate);
+  }
+  
+  // Initialize
+  resizeCanvas();
+  initParticles();
+  animate();
+  
+  // Handle resize
+  window.addEventListener('resize', () => {
+    resizeCanvas();
+    initParticles();
+  });
+  
+  // Reduce animation when tab not visible
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      cancelAnimationFrame(animationId);
+    } else {
+      animate();
+    }
+  });
+  
+  // ========== Reading Progress Bar ========== //
+  const progressBar = document.getElementById('reading-progress-bar');
+  
+  function updateProgressBar() {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    progressBar.style.width = progress + '%';
+  }
+  
+  window.addEventListener('scroll', updateProgressBar, { passive: true });
+  window.addEventListener('resize', updateProgressBar, { passive: true });
+  
+  // Initial update
+  updateProgressBar();
+})();
+</script>

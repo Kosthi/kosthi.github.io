@@ -1,4 +1,109 @@
 // ==============================
 // Override Variables
-// 覆盖变量
+// 覆盖变量 - 现代化主题配色
 // ==============================
+
+// 导入现代字体
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+// ========== Global ========== //
+// 使用 Inter 字体，更现代的无衬线体
+$global-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !default;
+$global-font-size: 16px;
+$global-font-weight: 400;
+$global-line-height: 1.75rem;
+
+// 浅色模式背景 - 轻微偏蓝灰
+$global-background-color: #f8fafc;
+// 深色模式背景 - 更深邃
+$global-background-color-dark: #0f172a;
+
+// 浅色模式文字颜色
+$global-font-color: #1e293b;
+$global-font-color-dark: #e2e8f0;
+
+// 次要文字颜色
+$global-font-secondary-color: #64748b;
+$global-font-secondary-color-dark: #94a3b8;
+
+// 链接颜色 - 渐变紫蓝主色
+$global-link-color: #6366f1;
+$global-link-color-dark: #a5b4fc;
+
+// 悬浮链接颜色
+$global-link-hover-color: #8b5cf6;
+$global-link-hover-color-dark: #c4b5fd;
+
+// 边框颜色
+$global-border-color: #e2e8f0;
+$global-border-color-dark: #334155;
+// ========== Global ========== //
+
+// ========== Header ========== //
+// 头部背景 - 支持毛玻璃效果
+$header-background-color: rgba(248, 250, 252, 0.85);
+$header-background-color-dark: rgba(15, 23, 42, 0.9);
+
+// 头部hover颜色
+$header-hover-color: #6366f1;
+$header-hover-color-dark: #a5b4fc;
+
+// 搜索背景
+$search-background-color: rgba(226, 232, 240, 0.8);
+$search-background-color-dark: rgba(51, 65, 85, 0.8);
+// ========== Header ========== //
+
+// ========== Single Content ========== //
+// 链接颜色 - 使用渐变紫蓝色系
+$single-link-color: #6366f1;
+$single-link-color-dark: #a5b4fc;
+
+$single-link-hover-color: #8b5cf6;
+$single-link-hover-color-dark: #c4b5fd;
+
+// 表格背景
+$table-background-color: #ffffff;
+$table-background-color-dark: #1e293b;
+
+$table-thead-color: #f1f5f9;
+$table-thead-color-dark: #334155;
+
+// 引用块颜色
+$blockquote-color: #a855f7;
+$blockquote-color-dark: #c084fc;
+// ========== Single Content ========== //
+
+// ========== Pagination ========== //
+$pagination-link-color: #6366f1;
+$pagination-link-color-dark: #a5b4fc;
+
+$pagination-link-hover-color: #8b5cf6;
+$pagination-link-hover-color-dark: #c4b5fd;
+// ========== Pagination ========== //
+
+// ========== Code ========== //
+// 代码字体 - JetBrains Mono
+$code-font-family: 'JetBrains Mono', 'Fira Code', Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+$code-font-size: 0.875rem;
+
+// 行内代码颜色
+$code-color: #ec4899;
+$code-color-dark: #f472b6;
+
+// 代码块背景
+$code-background-color: #f1f5f9;
+$code-background-color-dark: #1e293b;
+
+$code-info-color: #94a3b8;
+$code-info-color-dark: #64748b;
+// ========== Code ========== //
+
+// ========== Selection ========== //
+$selection-color: rgba(139, 92, 246, 0.25);
+$selection-color-dark: rgba(139, 92, 246, 0.4);
+// ========== Selection ========== //
+
+// ========== Scrollbar ========== //
+$scrollbar-color: #cbd5e1;
+$scrollbar-hover-color: #94a3b8;
+// ========== Scrollbar ========== //
