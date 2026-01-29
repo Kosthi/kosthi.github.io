@@ -1,0 +1,39 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>All Posts - LoveIt</title><link>https://koschei.top/en/posts/</link><description>All Posts | LoveIt</description><generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>nitianzero@gmail.com (Koschei)</managingEditor><webMaster>nitianzero@gmail.com (Koschei)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 13 Jan 2026 18:12:00 +0800</lastBuildDate><atom:link href="https://koschei.top/en/posts/" rel="self" type="application/rss+xml"/><item><title>[Stanford CS336] Assignment 5: Alignment and Reasoning Reinforcement Learning</title><link>https://koschei.top/en/cs336-assign2/</link><pubDate>Tue, 13 Jan 2026 18:12:00 +0800</pubDate><author>Koschei</author><guid>https://koschei.top/en/cs336-assign2/</guid><description><![CDATA[<h2 id="1-assignment-overview">1 Assignment Overview</h2>
+<p>In this assignment, you will gain hands-on experience in training language models to reason when solving math problems.</p>
+<h3 id="what-to-implement">What to Implement</h3>
+<ol>
+<li>Implement a zero-shot prompting baseline for the MATH competition dataset proposed by Hendrycks et al. [2021].</li>
+<li>Supervised Fine-Tuning (SFT) using reasoning traces from a stronger reasoning model (DeepSeek R1, DeepSeekAI et al., 2025).</li>
+<li>Use Expert Iteration to improve reasoning performance through verification rewards.</li>
+<li>Use Group Relative Policy Optimization (GRPO) to improve reasoning performance through verification rewards.</li>
+</ol>
+<p>For interested students, we will release an optional part of the assignment in the coming days: aligning language models with human preferences.</p>]]></description></item><item><title>[Stanford CS336] Assignment 1: Building a Transformer Language Model</title><link>https://koschei.top/en/cs336-assign1/</link><pubDate>Sat, 14 Jun 2025 17:43:58 +0800</pubDate><author>Koschei</author><guid>https://koschei.top/en/cs336-assign1/</guid><description><![CDATA[<h2 id="why-should-systems-enthusiasts-learn-large-language-models">Why Should Systems Enthusiasts Learn Large Language Models?</h2>
+<p>In today&rsquo;s AI technology wave, mastering large model knowledge has become an essential skill for systems developers. By participating in <strong>Stanford CS336 Large Model Systems Course</strong>, I began my journey of building large models from scratch. This course is likely to become a landmark course in the systems field over the next 3 years (similar to the position of CMU 15-445 database course in recent years).</p>]]></description></item><item><title>High-Performance BPE Tokenizer Optimization: From 10 Minutes to 1 Second</title><link>https://koschei.top/en/bpe-optimization/</link><pubDate>Sat, 14 Jun 2025 17:43:58 +0800</pubDate><author>Koschei</author><guid>https://koschei.top/en/bpe-optimization/</guid><description><![CDATA[<blockquote>
+<p>This article is supplementary reading for <a href="/posts/cs336-assign1/" rel="">CS336 Assignment 1</a>, providing a detailed introduction to the optimized implementation of the BPE tokenizer.</p>
+</blockquote>
+<h2 id="background">Background</h2>
+<p>The recommended cppyy in the documentation has issues in Mac and Linux environments. To pursue high performance, I used Pybind11 to bind C++ code: pre-tokenization is handled by Python, while the BPE merge process is delegated to C++. The actual biggest bottleneck is still pre-tokenization, which can be parallelized using the existing code <code>pretokenization_example.py</code> for chunked parallel processing (8 cores 100s → 16 cores 30s).</p>]]></description></item><item><title>Apply for 1Password OpenSource Plan Through Open Source Projects to Get Teams Subscription License</title><link>https://koschei.top/en/applying-1password-open-source-plan/</link><pubDate>Fri, 14 Mar 2025 23:18:00 +0800</pubDate><author>Koschei</author><guid>https://koschei.top/en/applying-1password-open-source-plan/</guid><description><![CDATA[<h2 id="introduction">Introduction</h2>
+<p>Today, most platforms have gradually transitioned from &ldquo;one-time purchase&rdquo; to &ldquo;subscription-based&rdquo;, and 1Password 8 is no exception. It&rsquo;s understandable that companies make such moves to maintain operations and continue development.</p>
+<p>As of March 2025, 1Password 8 Individual costs USD $35.88 per year, and Teams Starter (10 users) costs USD $239.4 per year.</p>
+<p></p>
+<p>Once you&rsquo;re approved for 1Password for Open Source Project, you can get a <strong>permanent</strong> 1Password for Teams subscription for free, which is truly generous.</p>]]></description></item><item><title>Build Doris on MacBook M1</title><link>https://koschei.top/en/build-doris-on-macbook-m1/</link><pubDate>Sun, 09 Mar 2025 20:28:46 +0800</pubDate><author>Koschei</author><guid>https://koschei.top/en/build-doris-on-macbook-m1/</guid><description><![CDATA[<h2 id="install-environment-dependencies">Install Environment Dependencies</h2>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-chevron-right fa-fw" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h fa-fw" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy fa-fw" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">brew install automake autoconf libtool pkg-config texinfo coreutils gnu-getopt <span class="se">\
+</span></span></span><span class="line"><span class="cl">python@3 cmake ninja ccache bison byacc gettext wget pcre maven llvm@16 openjdk@17 npm</span></span></code></pre></div></div><p><em>Doris master currently only supports JDK 17</em></p>
+<p>Environment variables that need to be set:</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-chevron-right fa-fw" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h fa-fw" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy fa-fw" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">JAVA_HOME</span><span class="o">=</span><span class="s2">&#34;/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="nv">$JAVA_HOME</span>/bin:<span class="nv">$PATH</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="s2">&#34;/opt/homebrew/opt/openjdk@17/bin:</span><span class="nv">$PATH</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="s2">&#34;/opt/homebrew/opt/texinfo/bin:</span><span class="nv">$PATH</span><span class="s2">&#34;</span></span></span></code></pre></div></div><h2 id="clone-your-code">Clone Your Code</h2>
+<ol>
+<li>
+<p>Clone the repository</p>]]></description></item></channel></rss>
