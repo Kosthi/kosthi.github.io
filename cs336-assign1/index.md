@@ -1,27 +1,28 @@
-# [斯坦福CS336]作业一：构建 Transformer 语言模型
+# [斯坦福CS336] 作业一：构建 Transformer 语言模型
 
 
 ## 为什么系统爱好者都应该学习大模型？
 
-在当今AI技术浪潮中，掌握大模型知识已成为系统开发者的必备技能。通过参与**斯坦福CS336大模型系统课程**，开始从零构建大模型的实践之旅。这门课程很可能在未来3年内成为系统领域的标杆课程（正如CMU 15-445数据库课程近年来的地位）。
+在当今 AI 技术浪潮中，掌握大模型知识已成为系统开发者的必备技能。通过参与**斯坦福 CS336 大模型系统课程**，开始从零构建大模型的实践之旅。这门课程很可能在未来 3 年内成为系统领域的标杆课程（正如 CMU 15-445 数据库课程近年来的地位）。
 
-### 作业1：构建 Transformer 语言模型
+### 作业概览
 
-通过以下三个小节实现了一个小型语言模型。
+本次作业通过以下三个模块实现了一个小型语言模型：
 
-- Tokenizer设计与实现
-- 模型架构编码（含Self-Attention机制）
-- 优化器开发
+1. **Tokenizer 设计与实现** — 字节对编码（BPE）分词器
+2. **模型架构编码** — 含 Self-Attention 机制的 Transformer
+3. **优化器开发** — AdamW 优化器
 
-作业地址：
-[Assignment1-Basics GitHub仓库](https://github.com/Kosthi/assignment1-basics)
+> 作业地址：[Assignment1-Basics GitHub 仓库](https://github.com/Kosthi/assignment1-basics)
 
-接下来我将分享完成作业的一部分细节和心得。
-#### 2.字节对编码（BPE）分词器
+接下来，我将分享完成作业的一部分细节和心得。
 
-##### 2.1 Unicode 标准
+---
+## 一、字节对编码（BPE）分词器
 
-**Problem**（unicode1）理解 Unicode（1 分）
+### 1.1 Unicode 标准
+
+**Problem（unicode1）：理解 Unicode（1 分）
 
 (a) `chr(0)`返回什么 Unicode 字符？
 
@@ -57,9 +58,9 @@ repr()函数显示转移序列'\\\x00'，打印什么都不显示，即空字符
 >>> print("this is a test" + chr(0) + "string")
 this is a teststring
 ```
-##### 2.2 Unicode 编码
+### 1.2 Unicode 编码
 
-##### **Problem**（unicode2）Unicode 编码（1 分）
+**Problem（unicode2）：Unicode 编码（1 分）**
 
 (a) 为什么优先选择在 UTF-8 编码的字节上训练分词器，而非 UTF-16 或 UTF-32？可对比不同编码对各类输入字符串的输出结果。
 
@@ -113,8 +114,9 @@ UnicodeDecodeError: 'utf-8' codec can't decode byte 0x80 in position 0: invalid 
 '䀁' ## 生僻字 䀁(yòu) UTF-8编码 E4 80 81
 ```
 
-##### 2.5 BPE分词器训练实验
-**1.在预分词之前移除特殊标记**
+### 1.3 BPE 分词器训练实验
+
+**预分词前移除特殊标记**
 
 ```python
 special_tokens = ["<|endoftext|>", "<sep>", "[SPECIAL]"]
@@ -124,7 +126,7 @@ special_tokens = ["<|endoftext|>", "<sep>", "[SPECIAL]"]
 <\|endoftext\|>|<sep>|\[SPECIAL\] # True: "|".join([re.escape(token) for token in special_tokens])
 ```
 
-**2.字节对编码（BPE）的优化**
+**BPE 优化策略**
 
 文档中推荐使用的cppyy在Mac和Linux环境中有问题，为了追求高性能，使用Pybind11来绑定cpp代码，我的代码中预分词由py处理，而BPE归并过程交给cpp，实际最大的瓶颈还是预分词，可以直接用已有的代码``pretokenization_example.py``做个分块并行提升最大（8核 100s，16核30s）。
 
@@ -353,7 +355,7 @@ string_map.find("es");     // O(1)，一次哈希计算+可能的多字节比较
 
 Python 的regex库底层c语言优化太神了，CPP的regex库对unicode支持不完善，Rust性能比Python慢一倍，正如文档所说，Python的regex库更胜一筹`...but the regex package in Python is, if anything, even faster.`。
 
-##### **问题**（train_bpe_tinystories）：在 TinyStories 上训练 BPE（2 分）
+**Problem（train_bpe_tinystories）：在 TinyStories 上训练 BPE（2 分）**
 
 (a) 训练耗时多久、占用多少内存？词汇表中最长的令牌是什么？是否合理？
 
@@ -382,7 +384,7 @@ Python 的regex库底层c语言优化太神了，CPP的regex库对unicode支持�
 
 优化后耗时最大为预分词过程，16进程并行30s，24进程并行25s，时间复杂度O(N*L/D)，D为进程个数。
 
-##### **问题**（train_bpe_expts_owt）：在 OpenWebText 上训练 BPE（2 分）
+**Problem（train_bpe_expts_owt）：在 OpenWebText 上训练 BPE（2 分）**
 
 (a) 在 OpenWebText 数据集上训练字节级 BPE 分词器，词汇表最大大小设为 32,000。将生成的词汇表和合并序列序列化到磁盘以便后续查看。词汇表中最长的令牌是什么？是否合理？
 
@@ -400,9 +402,9 @@ Python 的regex库底层c语言优化太神了，CPP的regex库对unicode支持�
 The
 ```
 
-##### 2.7 实验
+### 1.4 分词器实验
 
-##### **问题**（tokenizer_experiments）：分词器实验（4 分）
+**Problem（tokenizer_experiments）：分词器实验（4 分）**
 
 (a) 从 TinyStories 和 OpenWebText 中各采样 10 个文档。使用之前训练的 TinyStories 分词器（词汇表大小 10K）和 OpenWebText 分词器（词汇表大小 32K），将这些采样文档编码为整数 ID。每个分词器的压缩比（字节数 / 令牌数）是多少？
 
@@ -420,20 +422,28 @@ TinyStories-10K 分词器吞吐量约 **626,519.6 字节/秒**，编码 825GB Pi
 
 两个分词器的词汇表大小（10K 和 32K）均小于 65,536（2¹⁶），因此 uint16 足以表示所有令牌 ID，且比 uint32 节省 50% 存储空间。
 
-##### 3.6 资源核算（Resource accounting）
+---
+
+## 二、Transformer 资源核算
+
+### 2.1 FLOPs 核算基础
+
 了解 Transformer 各组成部分的计算量和内存占用情况十分有用。我们将逐步开展基础的“浮点运算次数（FLOPs）核算”。
 
 Transformer 的绝大多数浮点运算都来自矩阵乘法，因此核心思路很简单：
 
-- 1.列出 Transformer 前向传播过程中所有的矩阵乘法操作；
+1. 列出 Transformer 前向传播过程中所有的矩阵乘法操作
+2. 将每个矩阵乘法转换为所需的浮点运算次数
 
-- 2.将每个矩阵乘法转换为所需的浮点运算次数（FLOPs）。
+> **矩阵乘法 FLOPs 规则**：给定矩阵 $A \in \mathbb{R}^{m \times n}$ 和 $B \in \mathbb{R}^{n \times p}$，矩阵乘法 $AB$ 需消耗 $2mnp$ 个 FLOPs。因为 $(AB)[i,j] = A[i,:] \cdot B[:,j]$ 包含 $n$ 次加法和 $n$ 次乘法，共 $2n$ 个浮点运算；而矩阵 $AB$ 共有 $m \times p$ 个元素，因此总 FLOPs 为 $2mnp$。
 
-对于第二步，以下结论会有所帮助：规则：给定矩阵 \(A \in \mathbb{R}^{m×n}\) 和 \(B \in \mathbb{R}^{n×p}\)，矩阵乘法 AB 需消耗 2mnp 个浮点运算（FLOPs）。推导如下：矩阵乘法结果 AB 的第 \([i, j]\) 个元素等于 A 的第 i 行与 B 的第 j 列的点积（即 \((AB)[i, j] = A[i, :] · B[:, j]\)），该点积运算包含 n 次加法和 n 次乘法，共 2n 个浮点运算；而矩阵 AB 共有 \(m×p\) 个元素，因此总浮点运算次数为 \((2n)×(mp) = 2mnp\)。在解决下一个问题前，建议逐一梳理 Transformer 块和 Transformer 语言模型（LM）的每个组件，列出所有矩阵乘法操作及其对应的浮点运算成本。
+### 2.2 GPT-2 XL 资源核算
 
-#### 问题（transformer_accounting）：Transformer 语言模型资源核算（5 分）
+**Problem（transformer_accounting）：Transformer 语言模型资源核算（5 分）**
 
-(a) 考虑 GPT-2 XL 模型，其配置如下：
+**(a) GPT-2 XL 可训练参数计算**
+
+考虑 GPT-2 XL 模型配置：
 
 - 词汇表大小（vocab_size）：50,257
 - 上下文长度（context_length）：1,024
@@ -478,8 +488,8 @@ FFN 包含 3 个权重矩阵（W1、W2、W3），维度分别为`d_ff×d_model`�
 
 ##### （3）2 个 RMSNorm 层参数
 
-  - 每个 RMSNorm 的增益参数 \(g\) 维度：(d_model, )，(1600 个参数 / 层）
-  - 2 个 RMSNorm 总参数：\(2×1600 = 3,200\)（3200 个 / 层）
+  - 每个 RMSNorm 的增益参数 $g$ 维度：(d_model, )，(1600 个参数 / 层）
+  - 2 个 RMSNorm 总参数：$2 \times 1600 = 3,200$（3200 个 / 层）
   - 预归一化 Transformer 块包含 **2 个 RMSNorm 层**：分别在 MHA 前和 SwiGLU 前。
 
 ##### （4）Transformer 块总参数
@@ -491,7 +501,7 @@ ROPE 没有需要训练的参数，不变参数全部预计算并缓存。
 
 ##### 3. 归一化层（RMSNorm）
 
-- RMSNorm 的增益参数 \(g\) 维度：(d_model, )，(1600 个参数 / 层）
+- RMSNorm 的增益参数 $g$ 维度：(d_model, )，(1600 个参数 / 层）
 
 ##### 4. 输出投影层（LM Head，与嵌入层权重不共享）
 
@@ -503,9 +513,14 @@ ROPE 没有需要训练的参数，不变参数全部预计算并缓存。
 
 将所有组件参数相加：
 
-\(\begin{align*} \text{总参数} &= 80,411,200 + 1,966,233,600 + 1,600 + 80,411,200 \\ &= 2,127,057,600 \end{align*}\)
+$$
+\begin{align*}
+\text{总参数} &= 80,411,200 + 1,966,233,600 + 1,600 + 80,411,200 \\
+&= 2,127,057,600
+\end{align*}
+$$
 
-**ANSWER：**总可训练参数约 **21.28亿**，加载该模型需要占用 **7.92390704155 GB（约 8 GB） **。
+> **答案**：总可训练参数约 **21.28 亿**，加载该模型需要占用约 **8 GB** 内存。
 
 
 (b) 明确完成 GPT-2 XL 型模型前向传播所需的所有矩阵乘法操作。这些矩阵乘法总共需要多少浮点运算次数（FLOPs）？假设输入序列长度等于上下文长度（context_length）。列出所有矩阵乘法操作（含描述），并给出总浮点运算次数。
@@ -576,21 +591,29 @@ FLOPs分布:
   - 前馈网络（FFN）的占比从约 71.83% 下降到约 68.68%
   - 语言模型头的占比从约 3.92% 下降到约 3.75%
 
-#### 4. 训练 Transformer 语言模型
-##### 4.1 交叉熵损失
-Transformer 语言模型会为长度为 \(m+1\) 的序列 x 和每个位置 \(i=1,…,m\) 定义分布 \(p_{\theta}(x_{i+1} | x_{1: i})\)。
+---
 
-给定由长度为m的序列组成的训练集D，我们定义标准的交叉熵（负对数似然）损失函数：
+## 三、训练 Transformer 语言模型
 
-\(\ell(\theta ; D)=\frac{1}{|D|} \sum_{x \in D} \sum_{i=1}^{m}-\log p_{\theta}\left(x_{i+1} | x_{1: i}\right)\)
+### 3.1 交叉熵损失
 
-Transformer 的单次前向传播会同时输出所有\(i=1,…,m\)对应的\(p_{\theta}(x_{i+1} | x_{1: i})\)，其中|D|为训练集大小(batch_size)。
+Transformer 语言模型会为长度为 $m+1$ 的序列 $x$ 和每个位置 $i=1,\ldots,m$ 定义分布 $p_{\theta}(x_{i+1} | x_{1:i})$。
 
-具体来说，Transformer 会为每个位置 i 计算对数几率（logits）\(o_{i} \in \mathbb{R}^{vocab\_size}\)，由此可得：
+给定由长度为 $m$ 的序列组成的训练集 $D$，我们定义标准的交叉熵（负对数似然）损失函数：
 
-\(p\left(x_{i+1} | x_{1: i}\right)=\text{softmax}\left(o_{i}\right)\left[x_{i+1}\right]=\frac{\exp \left(o_{i}\left[x_{i+1}\right]\right)}{\sum_{a=1}^{vocab\_size} \exp \left(o_{i}[a]\right)}\)
+$$
+\ell(\theta; D) = \frac{1}{|D|} \sum_{x \in D} \sum_{i=1}^{m} -\log p_{\theta}(x_{i+1} | x_{1:i})
+$$
 
-交叉熵损失通常基于对数几率向量\(o_{i} \in \mathbb{R}^{vocab\_size}\)和目标值\(x_{i+1}\)定义。与 softmax 类似，实现交叉熵损失时需要注意数值稳定性问题。
+Transformer 的单次前向传播会同时输出所有 $i=1,\ldots,m$ 对应的 $p_{\theta}(x_{i+1} | x_{1:i})$，其中 $|D|$ 为训练集大小 (batch_size)。
+
+具体来说，Transformer 会为每个位置 $i$ 计算对数几率（logits）$o_i \in \mathbb{R}^{V}$，由此可得：
+
+$$
+p(x_{i+1} | x_{1:i}) = \text{softmax}(o_i)[x_{i+1}] = \frac{\exp(o_i[x_{i+1}])}{\sum_{a=1}^{V} \exp(o_i[a])}
+$$
+
+交叉熵损失通常基于对数几率向量 $o_i \in \mathbb{R}^{V}$ 和目标值 $x_{i+1}$ 定义。与 softmax 类似，实现交叉熵损失时需要注意数值稳定性问题。
 
 我们已经实现了 softmax 的稳定版本，对其取自然对数得 log_softmax：
 \[
@@ -620,7 +643,9 @@ def cross_entropy(inputs: torch.Tensor, targets: torch.Tensor):
     return -torch.mean(p)
 ```
 
-###### **Problem**（learning_rate_tuning）：调整学习率
+### 3.2 学习率调整
+
+**Problem（learning_rate_tuning）：调整学习率**
 
 如前所述，学习率是影响训练效果最重要的超参数之一。在我们的简单示例中实际验证这一点：使用上述 SGD 示例，分别尝试另外三个学习率值（1e1、1e2、1e3），仅训练 10 次迭代。观察每个学习率对应的损失变化：是衰减更快、更慢，还是发散（即训练过程中损失增加）？
 
@@ -663,9 +688,11 @@ step9 , loss: 6.858582164871578e+16
 step10, loss: 2.2023668704120668e+18
 ```
 
-**ANSWER: ** 学习率 10 时损失缓慢衰减；学习率 100 时损失迅速衰减，极速收敛至接近零；学习率 1000 时损失爆炸式增长，明显发散。
+> **答案**：学习率 10 时损失缓慢衰减；学习率 100 时损失迅速衰减，极速收敛至接近零；学习率 1000 时损失爆炸式增长，明显发散。
 
-**Problem (adamw): 实现 AdamW**
+### 3.3 实现 AdamW
+
+**Problem (adamw)：实现 AdamW**
 
 ```python
 import torch
@@ -732,46 +759,53 @@ class AdamW(torch.optim.Optimizer):
 
 **(a) 运行 AdamW 需要多少峰值内存？**
 
-根据参数、激活值、梯度和优化器状态的内存使用情况分解答案。用批量大小（batch_size）和模型超参数（vocab_size、context_length、num_layers、d_model、num_heads）表示。假设\(d_{ff}=4 \times d_{model}\)。
+根据参数、激活值、梯度和优化器状态的内存使用情况分解答案。用批量大小（batch_size）和模型超参数（vocab_size、context_length、num_layers、d_model、num_heads）表示。假设 $d_{ff} = 4 \times d_{model}$。
 
 为简化计算，激活值的内存使用仅考虑以下组件：
 
 - Transformer 块
   - RMSNorm 层
-  - 多头自注意力子层：QKV 投影、\(Q^{\top} K\)矩阵乘法、softmax、值的加权和、输出投影
-  - 位置 - wise 前馈网络：\(W_{1}\)矩阵乘法、SiLU 激活、\(W_{2}\)矩阵乘法
+  - 多头自注意力子层：QKV 投影、$Q^{\top}K$ 矩阵乘法、softmax、值的加权和、输出投影
+  - 位置前馈网络：$W_1$ 矩阵乘法、SiLU 激活、$W_2$ 矩阵乘法
 - 最终的 RMSNorm
 - 输出嵌入
 - 对数几率的交叉熵计算
 
 分别给出参数、激活值、梯度和优化器状态的代数表达式，以及总内存的代数表达式。
 
-- **参数内存**：  
-	$$
-  M_{\text{params}} = 4 \left( 2Vd + L(16d^2 + 2d) + d \right)
-  $$
-  其中 \(V\) 为词表大小，\(d\) 为模型维度，\(L\) 为层数。
+- **参数内存**：
 
-- **梯度内存**：  
-  \[
-  M_{\text{params}} = 4 \left( 2Vd + L(16d^2 + 2d) + d \right)
-  \]
+$$
+M_{\text{params}} = 4(2Vd + L(16d^2 + 2d) + d)
+$$
 
-- **优化器状态内存**（AdamW 存储一阶矩和二阶矩）：  
-  \[
-  M_{\text{opt}} = 8 \left( 2Vd + L(16d^2 + 2d) + d \right)
-  \]
+其中 $V$ 为词表大小，$d$ 为模型维度，$L$ 为层数。
 
-- **激活内存**（基于中间张量的保守估计）：  
-  \[
-  M_{\text{act}} = 4 \times \left[ L \times (16 B T d + 2 B h T^2) + B T d + 2 B T V \right]
-  \]
-  其中 \(B\) 为批次大小，\(T\) 为上下文长度，\(h\) 为注意力头数。
+- **梯度内存**：
+
+$$
+M_{\text{grad}} = 4(2Vd + L(16d^2 + 2d) + d)
+$$
+
+- **优化器状态内存**（AdamW 存储一阶矩和二阶矩）：
+
+$$
+M_{\text{opt}} = 8(2Vd + L(16d^2 + 2d) + d)
+$$
+
+- **激活内存**（基于中间张量的保守估计）：
+
+$$
+M_{\text{act}} = 4[L(16BTd + 2BhT^2) + BTd + 2BTV]
+$$
+
+其中 $B$ 为批次大小，$T$ 为上下文长度，$h$ 为注意力头数。
 
 - **总峰值内存**：
-  \[
-  M_{\text{total}} = 16 \left( 2Vd + L(16d^2 + 2d) + d \right) + 4 \times \left[ L \times (16 B T d + 2B h T^2) + B T d + 2 B T V \right]
-  \]
+
+$$
+M_{\text{total}} = 16(2Vd + L(16d^2 + 2d) + d) + 4[L(16BTd + 2BhT^2) + BTd + 2BTV]
+$$
 
 参考 DeepSeek 给的思路，给出激活内存的计算过程。
 
@@ -802,13 +836,16 @@ class AdamW(torch.optim.Optimizer):
 此外，每个 Transformer 层还有残差连接，需要存储层的输入（来自上一层输出）和最终输出。但这些通常已在其他组件中考虑或可重用，不单独计算。
 
 汇总一个 Transformer 层的激活内存元素数量：
-\[
-(2 + 3 + 1 + 1 + 4 + 4 + 1) \times B \times T \times d + 2 \times B \times h \times T^2 = 16 \times B \times T \times d + 2 \times B \times h \times T^2
-\]
+
+$$
+(2 + 3 + 1 + 1 + 4 + 4 + 1) \times BTd + 2BhT^2 = 16BTd + 2BhT^2
+$$
+
 故根据题目要求，我们采用给定表达式：
-\[
-\text{每层激活内存（元素）} = 16 \times B \times T \times d + 2 \times B \times h \times T^2
-\]
+
+$$
+\text{每层激活内存（元素）} = 16BTd + 2BhT^2
+$$
 **2. 其他组件**
 
 - **最终 RMSNorm**：输入和输出形状 `[B, T, d]`，需存储输出。元素数量为 `B × T × d`。
@@ -818,26 +855,33 @@ class AdamW(torch.optim.Optimizer):
 **3. 总激活内存**
 
 综合以上，总激活内存元素数量为：
-\[
-L \times (16 \times B \times T \times d + 2 \times B \times h \times T^2) + B \times T \times d + 2 \times B \times T \times V
-\]
+
+$$
+L(16BTd + 2BhT^2) + BTd + 2BTV
+$$
+
 转换为字节（乘以 4，因 float32 占 4 字节）：
-\[
-M_{\text{act}} = 4 \times \left[ L \times (16 B T d + 2 B h T^2) + B T d + 2 B T V \right]
-\]
+
+$$
+M_{\text{act}} = 4[L(16BTd + 2BhT^2) + BTd + 2BTV]
+$$
 **(b) 针对 GPT-2 XL 规模的模型实例化答案，得到仅依赖于批量大小（batch_size）的表达式。在 80GB 内存中，最多可使用多大的批量大小？**
 
-给出形如a×batch_size+b的表达式（其中a、b为数值），以及最大批量大小的数值。
+给出形如 $a \times B + b$ 的表达式（其中 a、b 为数值），以及最大批量大小的数值。
 
 总内存：
-\[
-M_{\text{total}} \approx 14.45 \times B + 31.70\ \text{GB}
-\]
+
+$$
+M_{\text{total}} \approx 14.45B + 31.70 \text{ GB}
+$$
+
 设内存上限为 80 GB：
-\[
+
+$$
 14.45B + 31.70 \leq 80 \implies B \leq \frac{80 - 31.70}{14.45} \approx 3.34
-\]
-最大批次大小为 **3**。
+$$
+
+> **答案**：最大批次大小为 **3**。
 
 **(c) 执行一次 AdamW 步骤需要多少 FLOPs？**
 
@@ -864,24 +908,34 @@ AdamW 更新每个参数约需 10 次浮点操作：
 - 后向传播 FLOPs 约为前向的 2 倍。
 
 每步总 FLOPs：
-\[
+
+$$
 \text{FLOPs}_{\text{step}} \approx 6 \times B \times T \times P
-\]
-代入 `B = 1024`，`T = 1024`，`P = 2,127,057,600`：
-\[
-\text{FLOPs}_{\text{step}} \approx 6 \times 1024 \times 1024 \times 2,127,057,600 \approx 1.34 \times 10^{16} \ \text{FLOPs}
-\]
+$$
+
+代入 $B = 1024$，$T = 1024$，$P = 2,127,057,600$：
+
+$$
+\text{FLOPs}_{\text{step}} \approx 6 \times 1024 \times 1024 \times 2.13 \times 10^9 \approx 1.34 \times 10^{16}
+$$
+
 总步数 400k，总 FLOPs：
-\[
-\text{FLOPs}_{\text{total}} \approx 400,\!000 \times 13,382,289,299,865,600 = 5.35 \times 10^{21} \ \text{FLOPs}
-\]
-NVIDIA A100 峰值吞吐为 `19.5 TFLOPS = 1.95 × 10^13 FLOP/s`，50% MFU 下实际吞吐：
-\[
-\text{Throughput} = 0.5 \times 1.95 \times 10^{13} = 9.75 \times 10^{12} \ \text{FLOP/s}
-\]
+
+$$
+\text{FLOPs}_{\text{total}} \approx 400,000 \times 1.34 \times 10^{16} = 5.35 \times 10^{21}
+$$
+
+NVIDIA A100 峰值吞吐为 $19.5$ TFLOPS，50% MFU 下实际吞吐：
+
+$$
+\text{Throughput} = 0.5 \times 1.95 \times 10^{13} = 9.75 \times 10^{12} \text{ FLOP/s}
+$$
+
 训练时间：
-\[
-t = \frac{5.35 \times 10^{21}}{9.75 \times 10^{12}} \approx 5.5 \times 10^8 \ \text{秒} \approx 6354.4 \ \text{天} \approx 17.4 \ \text{年}
-\]
-因此，在单 A100 上以 50% MFU 训练需约 **17.4 年**。
+
+$$
+t = \frac{5.35 \times 10^{21}}{9.75 \times 10^{12}} \approx 5.5 \times 10^8 \text{ 秒} \approx 6354 \text{ 天} \approx 17.4 \text{ 年}
+$$
+
+> **答案**：在单 A100 上以 50% MFU 训练需约 **17.4 年**。
 
