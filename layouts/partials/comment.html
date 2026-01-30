@@ -1,0 +1,43 @@
+{{- $comment := .Scratch.Get "comment" | default dict -}}
+
+{{- if $comment.enable -}}
+<div id="comments">
+    {{- /* Twikoo Comment System */ -}}
+    {{- $twikoo := $comment.twikoo | default dict -}}
+    {{- if $twikoo.enable -}}
+    <div id="twikoo" class="comment"></div>
+    <script src="https://cdn.jsdelivr.net/npm/twikoo@1.6.44/dist/twikoo.all.min.js"></script>
+    <script>
+        twikoo.init({
+            envId: '{{ $twikoo.envId }}',
+            el: '#twikoo',
+            path: location.pathname,
+            lang: '{{ $twikoo.lang | default "zh-CN" }}'
+        });
+
+        // 监听主题切换，同步 Twikoo 暗色模式
+        const updateTwikooTheme = () => {
+            const isDark = document.body.getAttribute('theme') === 'dark';
+            document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        };
+
+        // 初始化主题
+        updateTwikooTheme();
+
+        // 监听主题变化
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.attributeName === 'theme') {
+                    updateTwikooTheme();
+                }
+            });
+        });
+        observer.observe(document.body, { attributes: true });
+    </script>
+    <noscript>
+        请启用 JavaScript 以查看由 <a href="https://twikoo.js.org/" rel="nofollow noopener noreferrer"
+            target="_blank">Twikoo</a> 提供的评论。
+    </noscript>
+    {{- end -}}
+</div>
+{{- end -}}

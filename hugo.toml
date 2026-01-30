@@ -516,7 +516,7 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
       # Valine comment config (https://github.com/xCss/Valine)
       # Valine 评论系统设置 (https://github.com/xCss/Valine)
       [params.page.comment.valine]
-        enable = true
+        enable = false
         appId = "QGzwQXOqs5JOhN4RGPOkR2mR-MdYXbMMI"
         appKey = "WBmoGyJtbqUswvfLh6L8iEBr"
         placeholder = ""
@@ -597,6 +597,14 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
         lazyLoading = false
         lightTheme = "light"
         darkTheme = "dark"
+      # Twikoo comment config (https://twikoo.js.org/)
+      # Twikoo 评论系统设置
+      [params.page.comment.twikoo]
+        enable = true
+        envId = "https://koschei.netlify.app/.netlify/functions/twikoo"
+        region = ""
+        path = ""
+        lang = "zh-CN"
     # Third-party library config
     # 第三方库配置
     [params.page.library]
