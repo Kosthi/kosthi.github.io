@@ -1,4 +1,14 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>LoveIt</title><link>https://koschei.top/</link><description>Hugo theme - LoveIt</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>nitianzero@gmail.com (Koschei)</managingEditor><webMaster>nitianzero@gmail.com (Koschei)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 13 Jan 2026 18:12:00 +0800</lastBuildDate><atom:link href="https://koschei.top/index.xml" rel="self" type="application/rss+xml"/><item><title>[斯坦福CS336]作业五：对齐与推理强化学习</title><link>https://koschei.top/cs336-assign2/</link><pubDate>Tue, 13 Jan 2026 18:12:00 +0800</pubDate><author>Koschei</author><guid>https://koschei.top/cs336-assign2/</guid><description><![CDATA[<h2 id="1-作业概述">1 作业概述</h2>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>LoveIt</title><link>https://koschei.top/</link><description>Hugo theme - LoveIt</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>nitianzero@gmail.com (Koschei)</managingEditor><webMaster>nitianzero@gmail.com (Koschei)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sat, 31 Jan 2026 00:49:00 +0800</lastBuildDate><atom:link href="https://koschei.top/index.xml" rel="self" type="application/rss+xml"/><item><title>[斯坦福CS336]作业二：系统与并行计算</title><link>https://koschei.top/cs336-assign2/</link><pubDate>Sat, 31 Jan 2026 00:49:00 +0800</pubDate><author>Koschei</author><guid>https://koschei.top/cs336-assign2/</guid><description><![CDATA[<h2 id="1-作业概述">1 作业概述</h2>
+<p>本次作业中，你将亲自动手实践提升单 GPU 训练速度和将训练扩展到多 GPU 的方法。</p>
+<h3 id="需实现的内容">需实现的内容</h3>
+<ol>
+<li>基准测试与性能分析工具</li>
+<li>FlashAttention-2 的 Triton 内核</li>
+<li>分布式数据并行训练</li>
+<li>优化器状态分片</li>
+</ol>
+<p>作业地址：
+<a href="https://github.com/Kosthi/assignment2-systems" target="_blank" rel="noopener noreffer ">Assignment2-systems GitHub仓库</a></p>]]></description></item><item><title>[斯坦福CS336]作业五：对齐与推理强化学习</title><link>https://koschei.top/cs336-assign5/</link><pubDate>Tue, 13 Jan 2026 18:12:00 +0800</pubDate><author>Koschei</author><guid>https://koschei.top/cs336-assign5/</guid><description><![CDATA[<h2 id="1-作业概述">1 作业概述</h2>
 <p>本次作业中，你将获得训练语言模型解决数学问题时进行推理的实践经验。</p>
 <h3 id="需实现的内容">需实现的内容</h3>
 <ol>

@@ -1,4 +1,14 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>CS336 on LoveIt</title><link>https://koschei.top/tags/cs336/</link><description>Recent content in CS336 on LoveIt</description><generator>Hugo</generator><language>zh-CN</language><managingEditor>nitianzero@gmail.com (Koschei)</managingEditor><webMaster>nitianzero@gmail.com (Koschei)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Fri, 30 Jan 2026 01:02:21 +0800</lastBuildDate><atom:link href="https://koschei.top/tags/cs336/index.xml" rel="self" type="application/rss+xml"/><item><title>[斯坦福CS336]作业五：对齐与推理强化学习</title><link>https://koschei.top/cs336-assign2/</link><pubDate>Tue, 13 Jan 2026 18:12:00 +0800</pubDate><author>nitianzero@gmail.com (Koschei)</author><guid>https://koschei.top/cs336-assign2/</guid><description>&lt;h2 id="1-作业概述"&gt;1 作业概述&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>CS336 on LoveIt</title><link>https://koschei.top/tags/cs336/</link><description>Recent content in CS336 on LoveIt</description><generator>Hugo</generator><language>zh-CN</language><managingEditor>nitianzero@gmail.com (Koschei)</managingEditor><webMaster>nitianzero@gmail.com (Koschei)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sat, 31 Jan 2026 01:43:03 +0800</lastBuildDate><atom:link href="https://koschei.top/tags/cs336/index.xml" rel="self" type="application/rss+xml"/><item><title>[斯坦福CS336]作业二：系统与并行计算</title><link>https://koschei.top/cs336-assign2/</link><pubDate>Sat, 31 Jan 2026 00:49:00 +0800</pubDate><author>nitianzero@gmail.com (Koschei)</author><guid>https://koschei.top/cs336-assign2/</guid><description>&lt;h2 id="1-作业概述"&gt;1 作业概述&lt;/h2&gt;
+&lt;p&gt;本次作业中，你将亲自动手实践提升单 GPU 训练速度和将训练扩展到多 GPU 的方法。&lt;/p&gt;
+&lt;h3 id="需实现的内容"&gt;需实现的内容&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;基准测试与性能分析工具&lt;/li&gt;
+&lt;li&gt;FlashAttention-2 的 Triton 内核&lt;/li&gt;
+&lt;li&gt;分布式数据并行训练&lt;/li&gt;
+&lt;li&gt;优化器状态分片&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;作业地址：
+&lt;a href="https://github.com/Kosthi/assignment2-systems" target="_blank" rel="noopener noreffer "&gt;Assignment2-systems GitHub仓库&lt;/a&gt;&lt;/p&gt;</description></item><item><title>[斯坦福CS336]作业五：对齐与推理强化学习</title><link>https://koschei.top/cs336-assign5/</link><pubDate>Tue, 13 Jan 2026 18:12:00 +0800</pubDate><author>nitianzero@gmail.com (Koschei)</author><guid>https://koschei.top/cs336-assign5/</guid><description>&lt;h2 id="1-作业概述"&gt;1 作业概述&lt;/h2&gt;
 &lt;p&gt;本次作业中，你将获得训练语言模型解决数学问题时进行推理的实践经验。&lt;/p&gt;
 &lt;h3 id="需实现的内容"&gt;需实现的内容&lt;/h3&gt;
 &lt;ol&gt;
