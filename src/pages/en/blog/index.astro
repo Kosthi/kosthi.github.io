@@ -1,0 +1,9 @@
+---
+import BlogList from "../../../layouts/BlogList.astro";
+import { UI, getPosts } from "../../../i18n";
+
+const lang = "en" as const;
+const posts = await getPosts(lang);
+---
+
+<BlogList lang={lang} posts={posts} heading={UI[lang].allPosts} />

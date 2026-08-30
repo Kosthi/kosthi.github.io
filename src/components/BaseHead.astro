@@ -1,0 +1,116 @@
+---
+import "../styles/global.css";
+import "@fontsource/inter/latin-400.css";
+import "@fontsource/inter/latin-500.css";
+import "@fontsource/inter/latin-600.css";
+import inter400 from "@fontsource/inter/files/inter-latin-400-normal.woff2";
+import inter500 from "@fontsource/inter/files/inter-latin-500-normal.woff2";
+import inter600 from "@fontsource/inter/files/inter-latin-600-normal.woff2";
+
+import { DEFAULT_SOCIAL_IMAGE, SITE_TITLE } from "../consts";
+import { LANGS, LOCALES, delocalizePath, localizePath, type Lang } from "../i18n";
+
+export interface Props {
+	title: string;
+	description: string;
+	lang: Lang;
+	image?: string;
+	enable_katex?: boolean;
+	/** Languages this page actually exists in; defaults to all of them. */
+	availableLangs?: Lang[];
+}
+
+const {
+	title,
+	description,
+	lang,
+	image,
+	enable_katex,
+	availableLangs = [...LANGS],
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const socialImage = new URL(image || DEFAULT_SOCIAL_IMAGE, Astro.site);
+const basePath = delocalizePath(Astro.url.pathname);
+---
+
+<!-- Global Metadata -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
+<meta name="generator" content={Astro.generator} />
+
+<!-- Astro Nano font preloads -->
+<link rel="preload" href={inter400} as="font" type="font/woff2" crossorigin />
+<link rel="preload" href={inter500} as="font" type="font/woff2" crossorigin />
+<link rel="preload" href={inter600} as="font" type="font/woff2" crossorigin />
+
+<!-- Canonical URL -->
+<link rel="canonical" href={canonicalURL} />
+
+<!-- Alternate languages -->
+{
+	availableLangs.map((alt) => (
+		<link
+			rel="alternate"
+			hreflang={LOCALES[alt].htmlLang}
+			href={new URL(localizePath(alt, basePath), Astro.site)}
+		/>
+	))
+}
+<link rel="alternate" hreflang="x-default" href={new URL(basePath, Astro.site)} />
+
+<!-- Primary Meta Tags -->
+<title>{title}</title>
+<meta name="title" content={title} />
+<meta name="description" content={description} />
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content={Astro.url} />
+<meta property="og:locale" content={LOCALES[lang].htmlLang} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={socialImage} />
+
+<!-- Twitter -->
+<meta property="twitter:card" content={image ? "summary_large_image" : "summary"} />
+<meta property="twitter:url" content={Astro.url} />
+<meta property="twitter:title" content={title} />
+<meta property="twitter:description" content={description} />
+<meta property="twitter:image" content={socialImage} />
+
+<!-- Feeds -->
+<link rel="sitemap" href="/sitemap-index.xml" />
+<link
+	rel="alternate"
+	type="application/rss+xml"
+	title={SITE_TITLE}
+	href={localizePath(lang, "/rss.xml")}
+/>
+
+<script is:inline>
+	// Applied before first paint so the page never flashes the wrong theme.
+	(() => {
+		const preference = localStorage.getItem("theme") || "system";
+		const dark =
+			preference === "dark" ||
+			(preference === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+		document.documentElement.classList.toggle("dark", dark);
+		// Resolved value, not the preference -- embedded widgets read this.
+		document.documentElement.dataset.theme = dark ? "dark" : "light";
+	})();
+</script>
+
+{
+	enable_katex && (
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"
+			integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+"
+			crossorigin="anonymous"
+		/>
+	)
+}

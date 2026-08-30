@@ -1,0 +1,19 @@
+---
+import { render, type CollectionEntry } from "astro:content";
+import BlogPost from "../../../layouts/BlogPost.astro";
+import type { Lang } from "../../../i18n";
+import { blogPaths } from "../../../routing";
+
+export async function getStaticPaths() {
+	return blogPaths("en");
+}
+
+type Props = { post: CollectionEntry<"blog">; availableLangs: Lang[] };
+
+const { post, availableLangs } = Astro.props;
+const { Content } = await render(post);
+---
+
+<BlogPost post={post} lang="en" availableLangs={availableLangs}>
+	<Content />
+</BlogPost>

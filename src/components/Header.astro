@@ -1,0 +1,84 @@
+---
+import Container from "./Container.astro";
+import HeaderLink from "./HeaderLink.astro";
+import LanguagePicker from "./LanguagePicker.astro";
+import { SITE_TITLE } from "../consts";
+import { UI, localizePath, type Lang } from "../i18n";
+
+export interface Props {
+	lang: Lang;
+	availableLangs?: Lang[];
+}
+
+const { lang, availableLangs } = Astro.props;
+const t = UI[lang];
+
+const links = [
+	{ href: localizePath(lang, "/blog/"), label: t.nav.blog },
+	{ href: localizePath(lang, "/tags/"), label: t.nav.tags },
+	{ href: localizePath(lang, "/about/"), label: t.nav.about },
+];
+---
+
+<header>
+	<Container>
+		<div class="header-inner">
+			<a class="site-name" href={localizePath(lang, "/")}>{SITE_TITLE}</a>
+			<nav aria-label="Primary navigation">
+				{
+					links.map((link, index) => (
+						<>
+							{index > 0 && <span aria-hidden="true">/</span>}
+							<HeaderLink href={link.href}>{link.label}</HeaderLink>
+						</>
+					))
+				}
+				<span class="divider" aria-hidden="true">·</span>
+				<LanguagePicker lang={lang} availableLangs={availableLangs} />
+			</nav>
+		</div>
+	</Container>
+</header>
+
+<style>
+	header {
+		position: fixed;
+		z-index: 10;
+		top: 0;
+		left: 0;
+		right: 0;
+		padding: 1.25rem 0;
+		background: color-mix(in srgb, var(--background) 78%, transparent);
+		backdrop-filter: blur(12px) saturate(160%);
+	}
+	.header-inner {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+	.site-name {
+		font-weight: 600;
+		color: var(--text-strong);
+		text-decoration: none;
+	}
+	nav {
+		display: flex;
+		align-items: center;
+		gap: 0.35rem;
+		white-space: nowrap;
+	}
+	.divider {
+		color: var(--text-muted);
+	}
+	@media (max-width: 480px) {
+		header {
+			padding: 1rem 0;
+		}
+		.header-inner {
+			align-items: flex-start;
+			flex-direction: column;
+			gap: 0.4rem;
+		}
+	}
+</style>

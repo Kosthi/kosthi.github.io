@@ -1,0 +1,10 @@
+---
+import TermIndex from "../../layouts/TermIndex.astro";
+import { UI } from "../../i18n";
+import { collectTerms } from "../../routing";
+
+const lang = "zh" as const;
+const terms = await collectTerms(lang, "tags");
+---
+
+<TermIndex lang={lang} heading={UI[lang].allTags} terms={terms} basePath="/tags" />

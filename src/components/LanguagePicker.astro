@@ -1,0 +1,42 @@
+---
+import { LANGS, LOCALES, delocalizePath, localizePath, type Lang } from "../i18n";
+
+export interface Props {
+	lang: Lang;
+	/** Restrict the switcher when a page has no counterpart in some language. */
+	availableLangs?: Lang[];
+}
+
+const { lang, availableLangs = [...LANGS] } = Astro.props;
+
+const basePath = delocalizePath(Astro.url.pathname);
+const others = LANGS.filter((code) => code !== lang && availableLangs.includes(code));
+---
+
+{
+	others.length > 0 && (
+		<span class="language-picker">
+			{others.map((code) => (
+				<a href={localizePath(code, basePath)} lang={LOCALES[code].htmlLang} hreflang={LOCALES[code].htmlLang}>
+					{LOCALES[code].label}
+				</a>
+			))}
+		</span>
+	)
+}
+
+<style>
+	.language-picker {
+		display: inline-flex;
+		gap: 0.35rem;
+	}
+	a {
+		color: var(--text-muted);
+		text-decoration: none;
+		font-size: 0.875rem;
+		transition: color 180ms ease;
+	}
+	a:hover {
+		color: var(--text-strong);
+	}
+</style>
