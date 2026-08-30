@@ -16,7 +16,7 @@ export const LOCALES: Record<Lang, { htmlLang: string; label: string; dateLocale
 
 export const UI = {
 	zh: {
-		siteDescription: "Koschei 的博客，记录数据库、系统与大模型相关的学习与实践。",
+		siteDescription: "Koschei 的博客，记录数据库、系统与大模型方向的学习与实践。",
 		nav: { blog: "文章", tags: "标签", categories: "分类", about: "关于" },
 		latestPosts: "最新文章",
 		seeAllPosts: "全部文章",
