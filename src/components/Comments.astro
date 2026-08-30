@@ -1,0 +1,63 @@
+---
+import { TWIKOO_ENV_ID } from "../consts";
+import { LOCALES, UI, type Lang } from "../i18n";
+
+export interface Props {
+	lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = UI[lang];
+---
+
+<section class="comments" aria-label={t.comments}>
+	<h2>{t.comments}</h2>
+	<div id="twikoo"></div>
+</section>
+
+<script
+	is:inline
+	src="https://cdn.jsdelivr.net/npm/twikoo@1.6.44/dist/twikoo.all.min.js"
+	defer></script>
+
+<script is:inline define:vars={{ envId: TWIKOO_ENV_ID, twikooLang: LOCALES[lang].htmlLang }}>
+	(() => {
+		const mount = () => {
+			if (typeof window.twikoo === "undefined") return false;
+			window.twikoo.init({
+				envId,
+				el: "#twikoo",
+				path: location.pathname,
+				lang: twikooLang,
+			});
+			return true;
+		};
+
+		// The Twikoo bundle is deferred, so retry briefly until it lands.
+		if (!mount()) {
+			let attempts = 0;
+			const timer = setInterval(() => {
+				if (mount() || ++attempts > 40) clearInterval(timer);
+			}, 100);
+		}
+	})();
+</script>
+
+<style>
+	.comments {
+		margin-top: 3rem;
+		padding-top: 1.75rem;
+		border-top: 1px solid var(--border);
+	}
+	.comments h2 {
+		margin: 0 0 1rem;
+		font-size: 1.125rem;
+	}
+	/* Twikoo ships its own palette; nudge it onto the site's tokens. */
+	.comments :global(#twikoo) {
+		--twikoo-color-primary: var(--text-strong);
+	}
+	.comments :global(.tk-comments) {
+		font-size: 0.9375rem;
+	}
+</style>

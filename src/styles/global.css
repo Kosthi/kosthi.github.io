@@ -1,0 +1,287 @@
+:root {
+	color-scheme: light;
+	--background: #ffffff;
+	--surface: #fafafa;
+	--surface-hover: rgba(28, 25, 23, 0.055);
+	--text: #44403c;
+	--text-muted: #78716c;
+	--text-strong: #1c1917;
+	--border: rgba(28, 25, 23, 0.14);
+	--border-strong: rgba(28, 25, 23, 0.28);
+	--code-background: rgba(28, 25, 23, 0.06);
+
+	/* Inter carries no CJK glyphs, so the Chinese faces sit right behind it. */
+	--font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "PingFang SC",
+		"Hiragino Sans GB", "Noto Sans CJK SC", "Source Han Sans SC", "Microsoft YaHei",
+		sans-serif;
+	--font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+		"Liberation Mono", monospace;
+}
+
+:root.dark {
+	color-scheme: dark;
+	--background: #1c1917;
+	--surface: #292524;
+	--surface-hover: rgba(255, 255, 255, 0.07);
+	--text: rgba(255, 255, 255, 0.74);
+	--text-muted: rgba(255, 255, 255, 0.52);
+	--text-strong: #fafaf9;
+	--border: rgba(255, 255, 255, 0.16);
+	--border-strong: rgba(255, 255, 255, 0.3);
+	--code-background: rgba(255, 255, 255, 0.08);
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html {
+	min-height: 100%;
+	overflow-y: scroll;
+	scroll-behavior: smooth;
+}
+
+body {
+	display: flex;
+	min-height: 100vh;
+	margin: 0;
+	flex-direction: column;
+	background: var(--background);
+	color: var(--text);
+	font-family: var(--font-sans);
+	font-size: 1rem;
+	/* Slightly airier than the upstream 1.65 -- CJK glyphs fill more of the em box. */
+	line-height: 1.75;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+}
+
+ul,
+ol,
+li {
+	margin-block: 0;
+}
+
+main {
+	flex: 1;
+	padding: 8.5rem 0 3rem;
+}
+
+.container {
+	width: min(100%, 42rem);
+	margin-inline: auto;
+	padding-inline: 1.25rem;
+}
+
+a {
+	color: currentColor;
+	text-decoration-color: var(--border-strong);
+	text-underline-offset: 0.18em;
+	transition: color 180ms ease, text-decoration-color 180ms ease;
+}
+
+a:hover {
+	color: var(--text-strong);
+	text-decoration-color: currentColor;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+strong,
+b {
+	color: var(--text-strong);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	line-height: 1.35;
+	letter-spacing: -0.02em;
+	font-weight: 600;
+}
+
+h1 {
+	font-size: 1.5rem;
+}
+
+h2 {
+	font-size: 1.25rem;
+}
+
+h3 {
+	font-size: 1.125rem;
+}
+
+h4,
+h5,
+h6 {
+	font-size: 1rem;
+}
+
+code,
+kbd,
+samp,
+pre {
+	font-family: var(--font-mono);
+}
+
+.prose {
+	min-width: 0;
+}
+
+.prose > :first-child {
+	margin-top: 0;
+}
+
+.prose > :last-child {
+	margin-bottom: 0;
+}
+
+.prose p,
+.prose ul,
+.prose ol,
+.prose blockquote,
+.prose pre,
+.prose table {
+	margin-block: 1.25rem;
+}
+
+.prose li > ul,
+.prose li > ol {
+	margin-block: 0;
+}
+
+.prose li + li {
+	margin-top: 0.35rem;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+	margin-top: 2.4rem;
+	margin-bottom: 0.8rem;
+	scroll-margin-top: 7rem;
+}
+
+.prose img {
+	display: block;
+	max-width: 100%;
+	height: auto;
+	margin: 1.5rem auto;
+	border: 1px solid var(--border);
+	border-radius: 0.5rem;
+}
+
+.prose table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.prose th,
+.prose td {
+	padding: 0.6rem 0.75rem;
+	border-bottom: 1px solid var(--border);
+	text-align: left;
+}
+
+.prose code:not(pre code) {
+	padding: 0.15rem 0.35rem;
+	border-radius: 0.25rem;
+	background: var(--code-background);
+	color: var(--text-strong);
+	font-size: 0.85em;
+	word-break: break-word;
+}
+
+.prose pre {
+	overflow-x: auto;
+	padding: 1rem;
+	border: 1px solid var(--border);
+	border-radius: 0.5rem;
+	font-size: 0.82rem;
+	line-height: 1.6;
+}
+
+.prose blockquote {
+	margin-inline: 0;
+	padding-left: 1rem;
+	border-left: 2px solid var(--border-strong);
+	color: var(--text-muted);
+}
+
+/*
+ * Shiki's dual-theme output inlines the light colours directly and exposes the
+ * dark ones as custom properties, so only the dark side needs overriding --
+ * and it has to key off the `.dark` class rather than a media query, since the
+ * theme is user-selectable.
+ */
+:root.dark .prose .astro-code,
+:root.dark .prose .astro-code span {
+	background-color: var(--shiki-dark-bg) !important;
+	color: var(--shiki-dark) !important;
+	font-style: var(--shiki-dark-font-style) !important;
+	font-weight: var(--shiki-dark-font-weight) !important;
+	text-decoration: var(--shiki-dark-text-decoration) !important;
+}
+
+/* KaTeX display blocks overflow on narrow screens without this. */
+.prose .katex-display {
+	overflow-x: auto;
+	overflow-y: hidden;
+	padding-block: 0.35rem;
+}
+
+.page-heading {
+	margin: 0;
+}
+
+.page-kicker,
+.post-meta {
+	color: var(--text-muted);
+	font-size: 0.875rem;
+}
+
+.term-list {
+	display: flex;
+	margin: 0;
+	padding: 0;
+	flex-wrap: wrap;
+	gap: 0.55rem;
+	list-style: none;
+	font-size: 0.875rem;
+}
+
+.term-pill {
+	display: inline-block;
+	padding: 0.25rem 0.6rem;
+	border: 1px solid var(--border);
+	border-radius: 999px;
+	text-decoration: none;
+	transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+
+.term-pill:hover {
+	border-color: var(--border-strong);
+	background: var(--surface-hover);
+	color: var(--text-strong);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+}
+
+@media (max-width: 420px) {
+	main {
+		padding-top: 8.75rem;
+	}
+}

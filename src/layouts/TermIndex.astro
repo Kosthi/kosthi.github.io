@@ -1,0 +1,50 @@
+---
+import Base from "./Base.astro";
+import { SITE_TITLE } from "../consts";
+import { UI, localizePath, normalizeTerm, type Lang } from "../i18n";
+
+export interface Props {
+	lang: Lang;
+	heading: string;
+	/** Term -> post count, already scoped to this language. */
+	terms: { name: string; count: number }[];
+	basePath: "/tags" | "/categories";
+}
+
+const { lang, heading, terms, basePath } = Astro.props;
+const t = UI[lang];
+---
+
+<Base title={`${heading} | ${SITE_TITLE}`} description={t.siteDescription} lang={lang}>
+	<div class="term-index">
+		<h1 class="page-heading">{heading}</h1>
+		<ul class="term-list">
+			{
+				terms.map((term) => (
+					<li>
+						<a
+							class="term-pill"
+							href={localizePath(lang, `${basePath}/${normalizeTerm(term.name)}/`)}
+						>
+							{term.name}
+							<span class="count">{term.count}</span>
+						</a>
+					</li>
+				))
+			}
+		</ul>
+	</div>
+</Base>
+
+<style>
+	.term-index {
+		display: flex;
+		flex-direction: column;
+		gap: 1.75rem;
+	}
+	.count {
+		margin-left: 0.35rem;
+		color: var(--text-muted);
+		font-size: 0.8125rem;
+	}
+</style>

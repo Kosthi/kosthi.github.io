@@ -1,0 +1,111 @@
+---
+import { render } from "astro:content";
+import Base from "../layouts/Base.astro";
+import BlogItem from "../components/BlogItem.astro";
+import { AUTHOR, SITE_TITLE } from "../consts";
+import { UI, getPosts, localizePath, type Lang } from "../i18n";
+import { getPage } from "../routing";
+
+export interface Props {
+	lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = UI[lang];
+
+const intro = await getPage(lang, "home");
+const { Content } = await render(intro);
+const posts = (await getPosts(lang)).slice(0, 5);
+---
+
+<Base title={SITE_TITLE} description={intro.data.description || t.siteDescription} lang={lang}>
+	<div class="home-page">
+		<section class="home-intro">
+			<h1 class="page-heading">{intro.data.title}</h1>
+			<div class="prose"><Content /></div>
+		</section>
+
+		{
+			posts.length > 0 && (
+				<section class="home-posts">
+					<div class="section-header">
+						<h2>{t.latestPosts}</h2>
+						<a href={localizePath(lang, "/blog/")}>{t.seeAllPosts}</a>
+					</div>
+					<ul>
+						{posts.map((post) => (
+							<BlogItem post={post} lang={lang} compact />
+						))}
+					</ul>
+				</section>
+			)
+		}
+
+		<section class="home-connect">
+			<h2>{lang === "zh" ? "联系我" : "Let's connect"}</h2>
+			<ul aria-label="Contact links">
+				<li><a href={AUTHOR.github}>GitHub</a><span aria-hidden="true">/</span></li>
+				<li><a href={`mailto:${AUTHOR.email}`}>Email</a><span aria-hidden="true">/</span></li>
+				<li><a href={localizePath(lang, "/rss.xml")}>RSS</a></li>
+			</ul>
+		</section>
+	</div>
+</Base>
+
+<style>
+	.home-page {
+		display: flex;
+		flex-direction: column;
+		gap: 3rem;
+	}
+	.home-intro {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+	.home-posts,
+	.home-connect {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+	.home-connect {
+		gap: 1rem;
+	}
+	.section-header {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+	h2 {
+		margin: 0;
+		font-weight: 600;
+	}
+	.section-header a {
+		font-size: 0.875rem;
+	}
+	.home-posts ul {
+		display: flex;
+		margin: 0;
+		padding: 0;
+		flex-direction: column;
+		gap: 1rem;
+		list-style: none;
+	}
+	.home-connect ul {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.35rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.home-connect li {
+		display: flex;
+		align-items: center;
+		gap: 0.35rem;
+		white-space: nowrap;
+	}
+</style>

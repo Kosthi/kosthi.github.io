@@ -1,0 +1,81 @@
+---
+import type { CollectionEntry } from "astro:content";
+import Base from "./Base.astro";
+import BlogItem from "../components/BlogItem.astro";
+import { SITE_TITLE } from "../consts";
+import { UI, type Lang } from "../i18n";
+
+export interface Props {
+	lang: Lang;
+	posts: CollectionEntry<"blog">[];
+	heading: string;
+	description?: string;
+	availableLangs?: Lang[];
+}
+
+const { lang, posts, heading, description, availableLangs } = Astro.props;
+const t = UI[lang];
+
+const byYear = posts.reduce<Record<string, CollectionEntry<"blog">[]>>((groups, post) => {
+	const year = post.data.pubDate.getFullYear().toString();
+	(groups[year] ??= []).push(post);
+	return groups;
+}, {});
+const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
+---
+
+<Base
+	title={`${heading} | ${SITE_TITLE}`}
+	description={description ?? t.siteDescription}
+	lang={lang}
+	availableLangs={availableLangs}
+>
+	<div class="blog-list">
+		<header class="list-header">
+			<h1 class="page-heading">{heading}</h1>
+			<span class="page-kicker">{t.postCount(posts.length)}</span>
+		</header>
+		{
+			years.map((year) => (
+				<section>
+					<h2>{year}</h2>
+					<ul>
+						{byYear[year].map((post) => (
+							<BlogItem post={post} lang={lang} />
+						))}
+					</ul>
+				</section>
+			))
+		}
+	</div>
+</Base>
+
+<style>
+	.blog-list {
+		display: flex;
+		flex-direction: column;
+		gap: 2.75rem;
+	}
+	.list-header {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+	section {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+	h2 {
+		margin: 0;
+	}
+	ul {
+		display: flex;
+		margin: 0;
+		padding: 0;
+		flex-direction: column;
+		gap: 0.9rem;
+		list-style: none;
+	}
+</style>

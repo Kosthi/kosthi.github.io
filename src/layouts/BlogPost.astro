@@ -1,0 +1,111 @@
+---
+import type { CollectionEntry } from "astro:content";
+import Base from "./Base.astro";
+import Comments from "../components/Comments.astro";
+import FormattedDate from "../components/FormattedDate.astro";
+import { SITE_TITLE } from "../consts";
+import { UI, localizePath, normalizeTerm, type Lang } from "../i18n";
+
+export interface Props {
+	post: CollectionEntry<"blog">;
+	lang: Lang;
+	availableLangs: Lang[];
+}
+
+const { post, lang, availableLangs } = Astro.props;
+const t = UI[lang];
+const { title, description, pubDate, updatedDate, heroImage, socialImage, enable_katex, tags, categories } =
+	post.data;
+---
+
+<Base
+	title={`${title} | ${SITE_TITLE}`}
+	description={description}
+	lang={lang}
+	image={socialImage ?? heroImage}
+	enable_katex={enable_katex}
+	availableLangs={availableLangs}
+>
+	<article class="post">
+		<a class="back-link" href={localizePath(lang, "/blog/")}>{t.backToBlog}</a>
+		<header class="post-header">
+			<div class="post-meta">
+				<FormattedDate date={pubDate} lang={lang} />
+				{
+					categories.length > 0 && (
+						<>
+							<span aria-hidden="true">·</span>
+							{categories.map((category) => (
+								<a href={localizePath(lang, `/categories/${normalizeTerm(category)}/`)}>
+									{category}
+								</a>
+							))}
+						</>
+					)
+				}
+			</div>
+			<h1 class="page-heading">{title}</h1>
+		</header>
+		{heroImage && <img class="hero-image" src={heroImage} alt="" />}
+		<div class="prose">
+			<slot />
+		</div>
+		{
+			updatedDate && (
+				<div class="last-updated">
+					{t.lastUpdated} <FormattedDate date={updatedDate} lang={lang} />
+				</div>
+			)
+		}
+		{
+			tags.length > 0 && (
+				<ul class="term-list post-tags" aria-label={t.tags}>
+					{tags.map((tag) => (
+						<li>
+							<a class="term-pill" href={localizePath(lang, `/tags/${normalizeTerm(tag)}/`)}>
+								#{tag}
+							</a>
+						</li>
+					))}
+				</ul>
+			)
+		}
+		<Comments lang={lang} />
+	</article>
+</Base>
+
+<style>
+	.post {
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+	}
+	.back-link {
+		margin-bottom: 2.5rem;
+		font-size: 0.875rem;
+	}
+	.post-header {
+		margin-bottom: 2.5rem;
+	}
+	.post-meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.4rem;
+		margin-bottom: 0.35rem;
+	}
+	.hero-image {
+		width: 100%;
+		margin: 0 0 2.5rem;
+		border-radius: 0.65rem;
+	}
+	.last-updated {
+		margin-top: 2rem;
+		color: var(--text-muted);
+		font-size: 0.875rem;
+		font-style: italic;
+	}
+	.post-tags {
+		margin-top: 2rem;
+	}
+</style>

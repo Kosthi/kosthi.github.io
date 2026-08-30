@@ -1,0 +1,22 @@
+---
+import type { CollectionEntry } from "astro:content";
+import BlogList from "../../../layouts/BlogList.astro";
+import { UI, type Lang } from "../../../i18n";
+import { termPaths } from "../../../routing";
+
+export async function getStaticPaths() {
+	return termPaths("en", "tags", "tag");
+}
+
+type Props = { name: string; posts: CollectionEntry<"blog">[]; availableLangs: Lang[] };
+
+const lang = "en" as const;
+const { name, posts, availableLangs } = Astro.props;
+---
+
+<BlogList
+	lang={lang}
+	posts={posts}
+	heading={UI[lang].postsIn(name)}
+	availableLangs={availableLangs}
+/>

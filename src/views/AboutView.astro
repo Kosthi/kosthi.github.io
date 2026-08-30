@@ -1,0 +1,35 @@
+---
+import { render } from "astro:content";
+import Base from "../layouts/Base.astro";
+import { SITE_TITLE } from "../consts";
+import type { Lang } from "../i18n";
+import { getPage } from "../routing";
+
+export interface Props {
+	lang: Lang;
+}
+
+const { lang } = Astro.props;
+const page = await getPage(lang, "about");
+const { Content } = await render(page);
+---
+
+<Base
+	title={`${page.data.title} | ${SITE_TITLE}`}
+	description={page.data.description}
+	lang={lang}
+>
+	<article class="page">
+		<h1 class="page-heading">{page.data.title}</h1>
+		<div class="prose"><Content /></div>
+	</article>
+</Base>
+
+<style>
+	.page {
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+</style>

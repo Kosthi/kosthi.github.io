@@ -1,0 +1,37 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type Props = HTMLAttributes<"a">;
+
+const { href, class: className, ...props } = Astro.props;
+
+const { pathname } = Astro.url;
+const target = String(href);
+// Treat a section as active for its own page and everything nested under it.
+const isActive =
+	target === pathname ||
+	target === pathname.replace(/\/$/, "") ||
+	(target !== "/" && pathname.startsWith(target));
+---
+
+<a href={href} class:list={[className, { active: isActive }]} {...props}>
+	<slot />
+</a>
+
+<style>
+	a {
+		display: inline-block;
+		color: var(--text);
+		text-underline-offset: 0.2em;
+		text-decoration-color: var(--border-strong);
+		transition: color 180ms ease, text-decoration-color 180ms ease;
+	}
+	a:hover {
+		color: var(--text-strong);
+		text-decoration-color: currentColor;
+	}
+	a.active {
+		color: var(--text-strong);
+		font-weight: 600;
+	}
+</style>
